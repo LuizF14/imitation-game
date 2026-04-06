@@ -11,7 +11,7 @@ export class Password {
         if (!validator.isHash(value, "sha256")) {
             throw new Error("Invalid password hash");
         }
-        this.value = value;
+        this._value = value;
     }
 
     get value() {
