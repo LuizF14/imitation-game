@@ -1,4 +1,4 @@
-import { Text } from "../../src/entities/value_object/Text.js";
+import { Text } from "../src/entities/value_object/Text.js";
 
 describe("Text", () => {
   // ─── Construtor ───────────────────────────────────────────────────────────

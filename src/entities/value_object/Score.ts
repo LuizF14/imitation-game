@@ -2,14 +2,12 @@ export class Score {
     private _value! : number;
     
     constructor() {
-        this.value = 0;
+        this._value = 0;
     }
 
-    set value(value : number) {
-        if (value < 0) {
-            throw new Error("Invalid score value");
-        }
-        this._value = value;
+    add(points: number): void {
+        if (points < 0) throw new Error("Cannot add negative points.");
+        this._value += points;
     }
 
     get value() {

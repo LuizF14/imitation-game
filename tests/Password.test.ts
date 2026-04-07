@@ -1,4 +1,4 @@
-import { Password } from "../../src/entities/value_object/Password.js";
+import { Password } from "../src/entities/value_object/Password.js";
 
 // SHA-256 hash válido para usar nos testes
 const VALID_HASH = "b94f6f125c79e3a5ffaa826f584c10d52ada669e6762051b826b55776d05a849";

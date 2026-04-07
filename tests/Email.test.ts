@@ -1,4 +1,4 @@
-import { Email } from "../../src/entities/value_object/Email.js";
+import { Email } from "../src/entities/value_object/Email.js";
 
 describe("Email", () => {
   // ─── Construtor ───────────────────────────────────────────────────────────

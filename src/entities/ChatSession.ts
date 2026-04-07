@@ -13,4 +13,14 @@ export class ChatSession {
         this.startedAt = new Date();
         this.players = [player1, player2];
     }
+
+    getJudgmentOf(player: Player): PlayerJudgment | undefined {
+        return this.playersJudgement.find(j => j.judge === player);
+    }
+
+    getOpponentOf(player: Player): Player {
+        const opponent = this.players.find(p => p !== player);
+        if (!opponent) throw new Error("Player not found in this session.");
+        return opponent;
+    }
 }
