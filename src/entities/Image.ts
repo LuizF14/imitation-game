@@ -1,4 +1,5 @@
 import type { Admin } from "./Admin.js";
+import type { HumanOrAIEnum } from "./enums/HumanOrAIEnum.js";
 import type { GenContentCategory } from "./GenContentCategory.js";
 import type { ImageGenerationModel } from "./ImageGenerationModel.js";
 import { Score } from "./value_object/Score.js";
@@ -6,7 +7,7 @@ import { Score } from "./value_object/Score.js";
 export class Image {
     public imageURL : string;
     public score : Score = new Score();
-    public isAI : boolean | undefined;
+    public isAI : HumanOrAIEnum | undefined;
     public from : ImageGenerationModel | Admin;
     public category : GenContentCategory;
 
