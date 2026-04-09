@@ -5,3 +5,6 @@ dist/
 *.env
 
 *.zip
+/generated/prisma
+
+volumes/

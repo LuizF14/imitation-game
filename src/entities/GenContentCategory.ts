@@ -5,8 +5,8 @@ export class GenContentCategory {
     public basePrompt : Text;
 
     constructor(name : string, basePrompt : string) {
-        this.name = new Text(name);
-        this.basePrompt = new Text(basePrompt);
+        this.name = new Text(name, 40);
+        this.basePrompt = new Text(basePrompt, 1024);
     }
 
 }

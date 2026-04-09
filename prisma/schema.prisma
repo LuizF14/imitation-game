@@ -1,0 +1,188 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String  @id @default(uuid())
+  username  String  @db.VarChar(40)
+  email     String  @unique
+  password  String  @db.VarChar(255)
+  score     Int     @default(0)
+
+  judgements PlayerJudgment[] @relation("JudgeRelation")
+
+  judged_situations PlayerJudgment[] @relation("JudgedRelation")
+
+  currentSessionId  String
+  currentSession    ChatSession? @relation("CurrentUserSessionRelation", fields: [currentSessionId], references: [id])
+
+  imagesClassificationRounds  ImageClassificationRound? @relation("ImageRoundUserRelation")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Admin {
+  id        String  @id @default(uuid())
+  name      String  @db.VarChar(60)
+  email     String  @unique
+  password  String  @db.VarChar(255)
+
+  evaluatedProvider AIProvider[] @relation("EvaluatedProvidersRelation")
+  uploadedImages Image[] @relation("AdminImageRelation")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id                  String    @id @default(uuid())
+  content             String    @db.VarChar(1024)
+  creationDurationMs  Int  
+
+  sessionId   String
+  session     ChatSession   @relation("SessionMessageRelation", fields: [sessionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PlayerJudgment {
+  id          String    @id @default(uuid())
+  turingRate  Float     
+
+  judgeId     String
+  judge       User      @relation("JudgeRelation", fields: [judgeId], references: [id])
+
+  judged_ai_id  String?
+  judged_ai     AIModel? @relation("JudgedAIRelation", fields: [judged_ai_id], references: [id])
+
+  judged_id     String?
+  judged        User?    @relation("JudgedRelation", fields: [judged_id], references: [id]) 
+
+  sessionId   String
+  session     ChatSession @relation("PlayerJudmentSessionRelation", fields: [sessionId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ProviderStatusEnum {
+  APPROVED
+  REVOKED
+  PENDING
+}
+
+model AIProvider {
+  id        String  @id @default(uuid()) 
+  name      String  @db.VarChar(60) @unique
+  apiKey    String
+  baseURL   String 
+  status    ProviderStatusEnum
+
+  admin_id  String
+  admin     Admin   @relation("EvaluatedProvidersRelation", fields: [admin_id], references: [id])
+
+  models AIModel[] @relation("AIModelProviderRelation")
+}
+
+enum AIModelType {
+  LANGUAGE_MODEL
+  IMAGE_GENERATION_MODEL
+}
+
+model AIModel {
+  id    String  @id @default(uuid()) 
+  name  String  @db.VarChar(256) @unique
+  score Int     @default(0)
+
+  providerId String
+  provider AIProvider @relation("AIModelProviderRelation", fields: [providerId], references: [id])
+
+  ai_players AIPlayer[] @relation("AIPlayerModelRelation")
+
+  ai_judgments PlayerJudgment[] @relation("JudgedAIRelation")
+
+  type    AIModelType
+
+  imagesGenerated   Image[]  @relation("GeneratedImagesRelation")
+}
+
+enum HumanOrAIEnum {
+    HUMAN
+    AI
+}
+
+model Image {
+  id    String  @id @default(uuid()) 
+
+  imageURL  String
+  score     Int     @default(0)
+  isAI      HumanOrAIEnum 
+
+  fromModelId   String?
+  fromModel     AIModel? @relation("GeneratedImagesRelation", fields: [fromModelId], references: [id])
+
+  fromAdminId   String?
+  fromAdmin     Admin?    @relation("AdminImageRelation", fields: [fromAdminId], references: [id])
+
+  categoryId    String?
+  category      GenContentCategory?  @relation("CategoryImageRelation", fields: [categoryId], references: [id])
+
+  rounds  ImageClassificationRound? @relation("ImageRoundRelation")
+}
+
+model GenContentCategory {
+  id    String  @id @default(uuid()) 
+  name  String  @unique @db.VarChar(40)
+
+  basePrompt String @db.VarChar(1024)
+
+  images Image[] @relation("CategoryImageRelation")
+}
+
+model ImageClassificationRound {
+  id    String  @id @default(uuid()) 
+
+  userAnswer      HumanOrAIEnum
+  timeToAnswerMs  Int
+
+  imageId   String  @unique
+  image     Image   @relation("ImageRoundRelation", fields: [imageId], references: [id])  
+
+  userId  String    @unique
+  user    User  @relation("ImageRoundUserRelation", fields: [userId], references: [id])
+}
+
+model ChatSession {
+  id          String  @id @default(uuid()) 
+  startedAt   DateTime 
+  endedAt     DateTime?
+
+  messages Message[] @relation("SessionMessageRelation")
+
+  players   User[] @relation("CurrentUserSessionRelation")
+  ai_players AIPlayer[] @relation("AIPlayerSessionRelation")
+
+  player_judgment   PlayerJudgment[] @relation("PlayerJudmentSessionRelation")
+}
+
+model AIPlayer {
+  id  String  @id @default(uuid()) 
+
+  sessionId   String
+  session     ChatSession @relation("AIPlayerSessionRelation", fields: [sessionId], references: [id])
+
+  modelId     String
+  model       AIModel @relation("AIPlayerModelRelation", fields: [modelId], references: [id])
+}
