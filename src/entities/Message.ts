@@ -5,9 +5,9 @@ export class Message {
     public content : Text;
     private _creationDurationMs! : number;
 
-    constructor(content: string, createdAt : Date, creationDurationMs : number) {
+    constructor(content: string, creationDurationMs : number, createdAt? : Date) {
         this.content = new Text(content, 1024);
-        this.createdAt = createdAt;
+        this.createdAt = createdAt ?? new Date();
         this.creationDurationMs = creationDurationMs;
     }
 
