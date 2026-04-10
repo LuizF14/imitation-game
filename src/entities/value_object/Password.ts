@@ -1,20 +1,32 @@
-import validator from 'validator';
+import bcrypt from "bcrypt";
 
 export class Password {
-    private _value! : string;
+    private _hash! : string;
 
-    constructor(value: string) {
-        this.value = value;
+    private constructor(hash: string) {
+        this._hash = hash;
     }
 
-    set value(value : string) {
-        if (!validator.isHash(value, "sha256")) {
-            throw new Error("Invalid password hash");
+    static async createFromPlainText(plain : string) : Promise<Password> {
+        if (plain.length <= 6) {
+            throw new Error("Password too short");
         }
-        this._value = value;
+
+        const hash = await bcrypt.hash(plain, 10);
+        return new Password(hash);
     }
 
-    get value() {
-        return this._value;
+    static createFromHash(hash: string): Password {
+        const isValidFormat = /^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/.test(hash);
+
+        if (!isValidFormat) {
+            throw new Error("Invalid password hash format");
+        }
+
+        return new Password(hash);
+    }
+
+    get hash() {
+        return this._hash;
     }
 }

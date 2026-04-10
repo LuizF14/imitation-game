@@ -9,9 +9,9 @@ export class Admin {
     public name: Text;
     public evaluatedProviders : AIProvider[] = [];
 
-    constructor (name : string, email : string, password : string) {
+    constructor (name : string, email : string, password : Password) {
         this.name = new Text(name, 60);
         this.email = new Email(email);
-        this.password = new Password(password);
+        this.password = password;
     }
 }

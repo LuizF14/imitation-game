@@ -10,10 +10,10 @@ export class User extends Player {
     public score : Score = new Score();
     public username : Text;
 
-    constructor(username : string, email : string, password : string ) {
+    constructor(username : string, email : string, password : Password) {
         super();
         this.username = new Text(username, 40);
         this.email = new Email(email);
-        this.password = new Password(password);
+        this.password = password;
     }
 }

@@ -23,7 +23,7 @@ model User {
 
   judged_situations PlayerJudgment[] @relation("JudgedRelation")
 
-  currentSessionId  String
+  currentSessionId  String?
   currentSession    ChatSession? @relation("CurrentUserSessionRelation", fields: [currentSessionId], references: [id])
 
   imagesClassificationRounds  ImageClassificationRound? @relation("ImageRoundUserRelation")
