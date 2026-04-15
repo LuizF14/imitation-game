@@ -7,8 +7,9 @@ export abstract class AIModel {
     public score : Score = new Score();
     public provider : AIProvider;
 
-    constructor(name : string, provider : AIProvider) {
+    constructor(name : string, provider : AIProvider, score? : number) {
         this.name = new Text(name, 256);
         this.provider = provider;
+        this.score = new Score(score) ?? new Score();
     }
 }

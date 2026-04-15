@@ -23,13 +23,11 @@ model User {
 
   judged_situations PlayerJudgment[] @relation("JudgedRelation")
 
-  currentSessionId  String?
-  currentSession    ChatSession? @relation("CurrentUserSessionRelation", fields: [currentSessionId], references: [id])
-
-  imagesClassificationRounds  ImageClassificationRound? @relation("ImageRoundUserRelation")
+  imageClassificationRounds  ImageClassificationRound[] @relation("ImageRoundUserRelation")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 }
 
 model Admin {
@@ -47,7 +45,7 @@ model Admin {
 
 model Message {
   id                  String    @id @default(uuid())
-  content             String    @db.VarChar(1024)
+  content             String    @db.Text
   creationDurationMs  Int  
 
   sessionId   String
@@ -67,8 +65,8 @@ model PlayerJudgment {
   judged_ai_id  String?
   judged_ai     AIModel? @relation("JudgedAIRelation", fields: [judged_ai_id], references: [id])
 
-  judged_id     String?
-  judged        User?    @relation("JudgedRelation", fields: [judged_id], references: [id]) 
+  judged_user_id     String?
+  judged_user        User?    @relation("JudgedRelation", fields: [judged_user_id], references: [id]) 
 
   sessionId   String
   session     ChatSession @relation("PlayerJudmentSessionRelation", fields: [sessionId], references: [id])
@@ -94,6 +92,10 @@ model AIProvider {
   admin     Admin   @relation("EvaluatedProvidersRelation", fields: [admin_id], references: [id])
 
   models AIModel[] @relation("AIModelProviderRelation")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 }
 
 enum AIModelType {
@@ -116,6 +118,10 @@ model AIModel {
   type    AIModelType
 
   imagesGenerated   Image[]  @relation("GeneratedImagesRelation")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 }
 
 enum HumanOrAIEnum {
@@ -139,7 +145,11 @@ model Image {
   categoryId    String?
   category      GenContentCategory?  @relation("CategoryImageRelation", fields: [categoryId], references: [id])
 
-  rounds  ImageClassificationRound? @relation("ImageRoundRelation")
+  rounds  ImageClassificationRound[] @relation("ImageRoundRelation")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 }
 
 model GenContentCategory {
@@ -160,7 +170,7 @@ model ImageClassificationRound {
   imageId   String  @unique
   image     Image   @relation("ImageRoundRelation", fields: [imageId], references: [id])  
 
-  userId  String    @unique
+  userId  String
   user    User  @relation("ImageRoundUserRelation", fields: [userId], references: [id])
 }
 
@@ -171,7 +181,6 @@ model ChatSession {
 
   messages Message[] @relation("SessionMessageRelation")
 
-  players   User[] @relation("CurrentUserSessionRelation")
   ai_players AIPlayer[] @relation("AIPlayerSessionRelation")
 
   player_judgment   PlayerJudgment[] @relation("PlayerJudmentSessionRelation")

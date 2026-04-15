@@ -1,8 +1,8 @@
 export class Score {
     private _value! : number;
     
-    constructor() {
-        this._value = 0;
+    constructor(value? : number) {
+        this._value = value ?? 0;
     }
 
     add(points: number): void {
