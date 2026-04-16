@@ -9,9 +9,10 @@ export class AIProvider {
     public status : ProviderStatusEnum = ProviderStatusEnum.PENDING;
     public models : AIModel[] = [];
 
-    constructor(name : string, baseURL : string, apiKey : string) {
+    constructor(name : string, baseURL : string, apiKey : string, status? : ProviderStatusEnum) {
         this.name = new Text(name, 60);
         this.apiKey = apiKey;
         this.baseURL = baseURL;
+        this.status = ProviderStatusEnum.PENDING ?? status;
     }
 }
