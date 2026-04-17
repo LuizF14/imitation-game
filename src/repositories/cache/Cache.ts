@@ -1,4 +1,4 @@
-import { redis } from "../redis.js";
+import { redis } from "../../redis.js";
 
 export class Cache {
   static async get(key: string): Promise<any | null> {
@@ -18,5 +18,13 @@ export class Cache {
 
   static async del(key: string) {
     await redis.del(key);
+  }
+
+  static async addToList(key: string, value: unknown) {
+    await redis.rpush(key, JSON.stringify(value));
+  }
+
+  static async getList(key: string) {
+    return await redis.lrange(key, 0, -1);
   }
 }

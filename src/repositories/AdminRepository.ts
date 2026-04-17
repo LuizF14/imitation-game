@@ -1,15 +1,15 @@
 import { prisma } from "../prisma.js";
 import { Cache } from "./cache/Cache.js";
 
-export class AIProviderRepository {
-    private static CACHE_PREFIX = "aiprovider";
+export class AdminRepository {
+    private static CACHE_PREFIX = "admin";
 
-    static async create(name : string, apiKey : string, baseURL : string) {
-        return await prisma.aIProvider.create({
+    static async create(name : string, email : string, password : string) {
+        return await prisma.admin.create({
             data: {
                 name: name,
-                apiKey: apiKey,
-                baseURL: baseURL
+                email: email,
+                password: password
             }
         });
     }
@@ -21,20 +21,20 @@ export class AIProviderRepository {
             return cached;
         }
 
-        const prismaProvider = await prisma.aIProvider.findUnique({
+        const prismaAdmin = await prisma.admin.findUnique({
             where: { id }
         });
 
-        if (!prismaProvider) {
-            throw new Error("AIProvider not found");
+        if (!prismaAdmin) {
+            throw new Error("Admin not found");
         }
 
-        await Cache.set(`${this.CACHE_PREFIX}:${id}`, prismaProvider);
-        return prismaProvider;
+        await Cache.set(`${this.CACHE_PREFIX}:${id}`, prismaAdmin);
+        return prismaAdmin;
     }
 
-    static async update(data : Partial<{apiKey: string, baseURL: string}>, id : string) {
-        await prisma.aIProvider.update({
+    static async update(data : Partial<{name: string, password: string}>, id : string) {
+        await prisma.admin.update({
             where: { id },
             data: data
         });
@@ -43,7 +43,7 @@ export class AIProviderRepository {
     }
 
     static async delete(id : string) {
-        await prisma.aIProvider.update({
+        await prisma.admin.update({
             where: { id },
             data: {
                 deletedAt: new Date()

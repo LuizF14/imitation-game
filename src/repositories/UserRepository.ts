@@ -1,30 +1,34 @@
-import { User } from "../entities/User.js";
 import { prisma } from "../prisma.js";
 import { Cache } from "./cache/Cache.js";
-import { UserMapper } from "./mappers/UserMapper.js";
 
 export class UserRepository {
     private static CACHE_PREFIX = "user";
 
-    static async create(user : User) {
-        return await prisma.user.create(UserMapper.toDatabase(user));
+    static async create(username : string, email : string, password : string) {
+        return await prisma.user.create({
+            data: {
+                username: username,
+                email: email,
+                password: password
+            }
+        });
     }
 
-    static async findByEmail(email : string) : Promise<User> {
+    static async findByEmail(email : string) {
         const prismaUser = await prisma.user.findUnique({
             where: {email: email}
         });
 
         if (!prismaUser) throw new Error("User not found");
 
-        return UserMapper.toDomain(prismaUser);
+        return prismaUser;
     }
 
-    static async findById(id : string) : Promise<User> {
+    static async findById(id : string) {
         const cached = await Cache.get(`${this.CACHE_PREFIX}:${id}`);
 
         if (cached) {
-            return UserMapper.toDomain(cached);
+            return cached;
         }
 
         const prismaUser = await prisma.user.findUnique({
@@ -35,14 +39,14 @@ export class UserRepository {
             throw new Error("User not found");
         }
 
-        await Cache.set(`${this.CACHE_PREFIX}:${id}`, UserMapper.toCache(prismaUser));
-        return UserMapper.toDomain(prismaUser);
+        await Cache.set(`${this.CACHE_PREFIX}:${id}`, prismaUser);
+        return prismaUser;
     }
 
-    static async update(user: User, id: string): Promise<void> {
+    static async update(data : Partial<{username: string, password: string, score: number}>, id: string) {
         await prisma.user.update({
             where: { id },
-            data: UserMapper.toDatabase(user)
+            data: data
         });
 
         await Cache.del(`${this.CACHE_PREFIX}:${id}`);

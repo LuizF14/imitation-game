@@ -1,4 +1,4 @@
-import { Score } from "../src/entities/value_object/Score.js";
+import { Score } from "../src/domain/Score.js";
 
 describe("Score", () => {
   // ─── Construtor ───────────────────────────────────────────────────────────

@@ -1,4 +1,4 @@
-import { Password } from "../src/entities/value_object/Password.js";
+import { Password } from "../src/domain/Password.js";
 
 describe("Password", () => {
     it("`createFromPlainText` calculate hash, `createFromHash` doesn't", async () => {
