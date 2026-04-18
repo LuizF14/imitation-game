@@ -19,16 +19,10 @@ model User {
   password  String  @db.VarChar(255)
   score     Int     @default(0)
 
-  judgements PlayerJudgment[] @relation("JudgeRelation")
-
-  judged_situations PlayerJudgment[] @relation("JudgedRelation")
-
-  imageClassificationRounds  ImageClassificationRound[] @relation("ImageRoundUserRelation")
-
-  messages Message[] @relation
-
-  sessions_as_player1 ChatSession[] @relation("Player1Sessions")
-  sessions_as_player2 ChatSession[] @relation("Player2Sessions")
+  judgements                  PlayerJudgment[]
+  imageClassificationRounds   ImageClassificationRound[]
+  
+  players   Player[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -41,46 +35,40 @@ model Admin {
   email     String  @unique
   password  String  @db.VarChar(255)
 
-  evaluatedProvider AIProvider[] @relation("EvaluatedProvidersRelation")
-  uploadedImages Image[] @relation("AdminImageRelation")
+  evaluatedProvider AIProvider[]
+  uploadedImages    Image[]       
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Message {
-  id                  String    @id @default(uuid())
-  content             String    @db.Text
+  id                  String        @id @default(uuid())
+  content             String        @db.Text
   creationDurationMs  Int  
 
-  userId   String?
-  user     User? @relation(fields: [userId], references: [id])
+  playerId            String
+  player              Player        @relation(fields: [playerId], references: [id])
 
-  aiPlayerId String?
-  aiPlayer   AIPlayer? @relation(fields: [aiPlayerId], references: [id])
-
-  sessionId   String
-  session     ChatSession   @relation("SessionMessageRelation", fields: [sessionId], references: [id])
+  sessionId           String
+  session             ChatSession   @relation(fields: [sessionId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model PlayerJudgment {
-  id          String    @id @default(uuid())
+  id          String      @id @default(uuid())
   turingRate  Float     
 
   judgeId     String
-  judge       User      @relation("JudgeRelation", fields: [judgeId], references: [id])
+  judge       User        @relation(fields: [judgeId], references: [id])
 
-  judged_ai_id  String?
-  judged_ai     AIModel? @relation("JudgedAIRelation", fields: [judged_ai_id], references: [id])
-
-  judged_user_id     String?
-  judged_user        User?    @relation("JudgedRelation", fields: [judged_user_id], references: [id]) 
+  judgedId    String
+  judged      Player      @relation(fields: [judgedId], references: [id])
 
   sessionId   String
-  session     ChatSession @relation("PlayerJudmentSessionRelation", fields: [sessionId], references: [id])
+  session     ChatSession @relation(fields: [sessionId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -93,16 +81,16 @@ enum ProviderStatusEnum {
 }
 
 model AIProvider {
-  id        String  @id @default(uuid()) 
-  name      String  @db.VarChar(60) @unique
+  id        String              @id @default(uuid()) 
+  name      String              @db.VarChar(60) @unique
   apiKey    String
   baseURL   String 
   status    ProviderStatusEnum  @default(PENDING)
 
   admin_id  String?
-  admin     Admin?   @relation("EvaluatedProvidersRelation", fields: [admin_id], references: [id])
+  admin     Admin?              @relation(fields: [admin_id], references: [id])
 
-  models AIModel[] @relation("AIModelProviderRelation")
+  models    AIModel[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -115,21 +103,19 @@ enum AIModelType {
 }
 
 model AIModel {
-  id    String  @id @default(uuid()) 
-  name  String  @db.VarChar(256) @unique
-  score Int     @default(0)
-  pathURL   String  @db.VarChar(64)
+  id          String      @id @default(uuid()) 
+  name        String      @db.VarChar(256) @unique
+  score       Int         @default(0)
+  pathURL     String      @db.VarChar(64)
 
-  providerId String
-  provider AIProvider @relation("AIModelProviderRelation", fields: [providerId], references: [id])
+  providerId  String
+  provider    AIProvider  @relation(fields: [providerId], references: [id])
 
-  ai_players AIPlayer[] @relation("AIPlayerModelRelation")
+  type        AIModelType
 
-  ai_judgments PlayerJudgment[] @relation("JudgedAIRelation")
+  players     Player[]
 
-  type    AIModelType
-
-  imagesGenerated   Image[]  @relation("GeneratedImagesRelation")
+  imagesGenerated   Image[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -142,22 +128,22 @@ enum HumanOrAIEnum {
 }
 
 model Image {
-  id    String  @id @default(uuid()) 
+  id        String  @id @default(uuid()) 
 
   imageURL  String
   score     Int     @default(0)
   isAI      HumanOrAIEnum 
 
   fromModelId   String?
-  fromModel     AIModel? @relation("GeneratedImagesRelation", fields: [fromModelId], references: [id])
+  fromModel     AIModel? @relation(fields: [fromModelId], references: [id])
 
   fromAdminId   String?
-  fromAdmin     Admin?    @relation("AdminImageRelation", fields: [fromAdminId], references: [id])
+  fromAdmin     Admin?    @relation(fields: [fromAdminId], references: [id])
 
   categoryId    String
-  category      GenContentCategory  @relation("CategoryImageRelation", fields: [categoryId], references: [id])
+  category      GenContentCategory  @relation(fields: [categoryId], references: [id])
 
-  rounds  ImageClassificationRound[] @relation("ImageRoundRelation")
+  rounds  ImageClassificationRound[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -165,12 +151,11 @@ model Image {
 }
 
 model GenContentCategory {
-  id    String  @id @default(uuid()) 
-  name  String  @unique @db.VarChar(40)
+  id          String  @id @default(uuid()) 
+  name        String  @unique @db.VarChar(40)
+  basePrompt  String  @db.VarChar(1024)
 
-  basePrompt String @db.VarChar(1024)
-
-  images Image[] @relation("CategoryImageRelation")
+  images Image[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -183,46 +168,46 @@ model ImageClassificationRound {
   timeToAnswerMs  Int
 
   imageId   String  @unique
-  image     Image   @relation("ImageRoundRelation", fields: [imageId], references: [id])  
+  image     Image   @relation(fields: [imageId], references: [id])  
 
-  userId  String
-  user    User  @relation("ImageRoundUserRelation", fields: [userId], references: [id])
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model ChatSession {
-  id          String  @id @default(uuid()) 
+  id          String    @id @default(uuid()) 
   startedAt   DateTime 
   endedAt     DateTime?
 
-  messages Message[] @relation("SessionMessageRelation")
+  messages    Message[]
 
-  userplayer1_id String
-  userplayer2_id String
-  userplayer1    User @relation("Player1Sessions", fields: [userplayer1_id], references: [id])
-  userplayer2    User @relation("Player2Sessions", fields: [userplayer2_id], references: [id])
+  player1Id   String
+  player1     Player    @relation("Player1Session", fields: [player1Id], references: [id])
 
-  aiplayer_id String? @unique
-  aiplayer    AIPlayer? @relation("AIPlayerSessionRelation", fields: [aiplayer_id], references: [id])
+  player2Id   String
+  player2     Player    @relation("Player2Session", fields: [player2Id], references: [id])
 
-  player_judgment   PlayerJudgment[] @relation("PlayerJudmentSessionRelation")
+  player_judgment   PlayerJudgment[] 
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model AIPlayer {
-  id  String  @id @default(uuid()) 
+model Player {
+  id                  String            @id @default(uuid())
+  type                HumanOrAIEnum
 
-  session ChatSession? @relation("AIPlayerSessionRelation")
+  userId              String?
+  user                User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  messages Message[] @relation
+  aiId                String?
+  ai                  AIModel?           @relation(fields: [aiId], references: [id], onDelete: Cascade)
 
-  modelId     String
-  model       AIModel @relation("AIPlayerModelRelation", fields: [modelId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  messages            Message[]       
+  sessionAsPlayer1    ChatSession[]     @relation("Player1Session")
+  sessionAsPlayer2    ChatSession[]     @relation("Player2Session")
+  judgment            PlayerJudgment[]
 }

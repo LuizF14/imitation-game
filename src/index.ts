@@ -10,19 +10,24 @@ import { ChatSessionRepository } from "./repositories/ChatSessionRepository.js";
 import { PlayerJudgmentRepository } from "./repositories/PlayerJudgmentRepository.js";
 import { MessageRepository } from "./repositories/MessageRepository.js";
 import { ImageClassificationRoundRepository } from "./repositories/ImageClassificationRoundRepository.js";
-import { AIPlayerRepository } from "./repositories/AIPlayerRepository.js";
+import { PlayerRepository } from "./repositories/PlayerRepository.js";
 
-const id = await AIPlayerRepository.create("bc82f8b0-bd41-44af-9988-3ae2ea820f67");
-await ChatSessionRepository.create("b8d83ea2-39e6-4514-8cfa-e06bb10d2cbf", id, HumanOrAIEnum.AI);
-await
-console.log();
+const admin = await AdminRepository.create("enzo seraphim", "enzo@unifei.edu.br", "abcdef");
+const user = await UserRepository.create("luiz felipe", "luizfelipecp2016@gmail.com", "abcdef");
+const provider = await AIProviderRepository.create("open ai", "1234", "chatgpt.com");
+const model = await AIModelRepository.create("chatgpt", provider.id, "/model", AIModelType.LANGUAGE_MODEL);
+const category = await CategoryRepository.create("apple", "draw an apple");
+const img = await ImageRepository.createFromAdmin("apple", category.id, admin.id);
 
-// const admin = await AdminRepository.create("enzo seraphim", "enzo@unifei.edu.br", "abcdef");
-// await UserRepository.create("luiz felipe", "luizfelipecp2016@gmail.com", "abcdef");
-// const provider = await AIProviderRepository.create("open ai", "1234", "chatgpt.com");
-// await AIModelRepository.create("chatgpt", provider.id, "/model", AIModelType.LANGUAGE_MODEL);
-// const category = await CategoryRepository.create("apple", "draw an apple");
-// await ImageRepository.createFromAdmin("apple", category.id, admin.id);
+const userPlayer = await PlayerRepository.create(user.id, HumanOrAIEnum.HUMAN);
+const aiPlayer = await PlayerRepository.create(model.id, HumanOrAIEnum.AI);
+const sessionId = await ChatSessionRepository.create(userPlayer, aiPlayer);
+await MessageRepository.addMessage(sessionId, "aaaa", userPlayer, 1000);
+await PlayerJudgmentRepository.addJudgment(0.2, user.id, sessionId, aiPlayer);
+await ChatSessionRepository.endSession(sessionId);
+
+
+
 
 
 

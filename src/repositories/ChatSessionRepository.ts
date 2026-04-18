@@ -3,27 +3,20 @@ import { prisma } from "../prisma.js";
 import { Cache } from "./cache/Cache.js";
 import { MessageRepository } from "./MessageRepository.js";
 import { PlayerJudgmentRepository } from "./PlayerJudgmentRepository.js";
+import { PlayerRepository } from "./PlayerRepository.js";
 
 export class ChatSessionRepository {
     private static CACHE_PREFIX = "chatsession";
 
-    static async create(player1Id : string, player2Id : string, player2Type: HumanOrAIEnum) {
+    static async create(player1Id : string, player2Id : string) {
         const session = {
             id: crypto.randomUUID(),
             startedAt: new Date().toISOString(),
-            player1Id,
-            player2Id,
-            player2Type
+            player1Id: player1Id,
+            player2Id: player2Id
         };
         const sessionKey = `${this.CACHE_PREFIX}:${session.id}`;
         await Cache.set(sessionKey, session, 600);
-        
-        await MessageRepository.createMessageList(session.id);
-        await PlayerJudgmentRepository.createJudgmentList(session.id, session.player1Id);
-        if (player2Type === HumanOrAIEnum.HUMAN) {
-            await PlayerJudgmentRepository.createJudgmentList(session.id, session.player2Id);
-        }
-
         return session.id;
     }
 
@@ -44,17 +37,15 @@ export class ChatSessionRepository {
         if (!session) throw new Error("Session not found");
 
         try {
-            const userplayer2_id = session.player2Type === HumanOrAIEnum.HUMAN ? session.player2Id : null;
-            const aiplayer_id = session.player2Type === HumanOrAIEnum.AI ? session.player2Id : null;
-
+            await PlayerRepository.endInstance(session.player1Id);
+            await PlayerRepository.endInstance(session.player2Id);
             await prisma.chatSession.create({
                 data: {
                     id: session.id,
                     startedAt: new Date(session.startedAt),
                     endedAt: new Date(),
-                    userplayer1_id: session.player1Id,
-                    userplayer2_id: userplayer2_id ?? null,
-                    aiplayer_id: aiplayer_id ?? null
+                    player1Id: session.player1Id,
+                    player2Id: session.player2Id
                 }
             });
             await MessageRepository.endSession(session.id);

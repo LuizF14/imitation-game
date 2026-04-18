@@ -1,4 +1,3 @@
-import { HumanOrAIEnum } from "../../generated/prisma/enums.js";
 import { prisma } from "../prisma.js";
 import { Cache } from "./cache/Cache.js";
 
@@ -6,17 +5,11 @@ export class MessageRepository {
     private static CACHE_PREFIX = "chatsession";
     private static CACHE_SUFIX = "messages";
 
-    static async createMessageList(sessionId : string) {
-        const messagesKey = `${this.CACHE_PREFIX}:${sessionId}:messages`;
-        await Cache.set(messagesKey, [], 600);
-    }
-
-    static async addMessage(sessionId: string, content: string, from: string, type: HumanOrAIEnum, creationDurationMs: number) {
+    static async addMessage(sessionId: string, content: string, from: string, creationDurationMs: number) {
         const key = `${this.CACHE_PREFIX}:${sessionId}:${this.CACHE_SUFIX}`;
         await Cache.addToList(key, {
             content: content,
             creationDurationMs: creationDurationMs,
-            type: type,
             fromId: from
         });
     }
@@ -37,15 +30,12 @@ export class MessageRepository {
 
         const parsedMessages = messages.map(raw => {
             const m = typeof raw === "string" ? JSON.parse(raw) : raw;
-            const userId = m.type === HumanOrAIEnum.HUMAN ? m.type : null;
-            const aiPlayerId = m.type === HumanOrAIEnum.AI ? m.type : null;
 
             return {
                 content: m.content,
                 creationDurationMs: m.creationDurationMs,
                 sessionId: sessionId,
-                userId: userId,
-                aiPlayerId: aiPlayerId
+                playerId: m.fromId
             };
         });
 
