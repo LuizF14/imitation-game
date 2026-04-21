@@ -1,5 +1,5 @@
 import type { HumanOrAIEnum } from "../../generated/prisma/enums.js";
-import { prisma } from "../prisma.js";
+import { prisma } from "../lib/prisma.js";
 import { Cache } from "./cache/Cache.js";
 
 export class ImageClassificationRoundRepository {

@@ -1,4 +1,4 @@
-import { redis } from "../../redis.js";
+import { redis } from "../../lib/redis.js";
 
 export class Cache {
   static async get(key: string): Promise<any | null> {

@@ -6,10 +6,12 @@
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider = "postgresql"
+  extensions = [pg_trgm]
 }
 
 model User {
@@ -40,6 +42,7 @@ model Admin {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 }
 
 model Message {
@@ -83,8 +86,9 @@ enum ProviderStatusEnum {
 model AIProvider {
   id        String              @id @default(uuid()) 
   name      String              @db.VarChar(60) @unique
-  apiKey    String
   baseURL   String 
+  email     String              @unique
+  password  String              @db.VarChar(255)
   status    ProviderStatusEnum  @default(PENDING)
 
   admin_id  String?
@@ -107,6 +111,7 @@ model AIModel {
   name        String      @db.VarChar(256) @unique
   score       Int         @default(0)
   pathURL     String      @db.VarChar(64)
+  apiKey      String
 
   providerId  String
   provider    AIProvider  @relation(fields: [providerId], references: [id])
@@ -159,6 +164,7 @@ model GenContentCategory {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 }
 
 model ImageClassificationRound {

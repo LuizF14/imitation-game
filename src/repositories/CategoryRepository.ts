@@ -1,4 +1,4 @@
-import { prisma } from "../prisma.js";
+import { prisma } from "../lib/prisma.js";
 import { Cache } from "./cache/Cache.js";
 
 export class CategoryRepository {
@@ -33,22 +33,57 @@ export class CategoryRepository {
     }
 
     static async update(data : Partial<{name: string, basePrompt: string}>, id : string) {
-        await prisma.genContentCategory.update({
+        const result = await prisma.genContentCategory.update({
             where: { id },
             data: data
         });
 
         await Cache.del(`${this.CACHE_PREFIX}:${id}`);
+        return result;
     }
 
     static async delete(id : string) {
-        await prisma.genContentCategory.update({
-            where: { id },
-            data: {
-                deletedAt: new Date()
+        const now = new Date();
+
+        const result = await prisma.$transaction(async (tx) => {
+            const relatedImages = await tx.image.findMany({
+                where: {
+                    categoryId: id,
+                    deletedAt: null
+                },
+                select: { id: true }
+            });
+
+            await tx.image.updateMany({
+                where: { categoryId: id },
+                data: { deletedAt: now }
+            });
+
+            const result = await tx.genContentCategory.update({
+                where: { id },
+                data: { deletedAt: now }
+            });
+
+            return { result, relatedImages };
+        });
+
+        await Promise.all(
+            result.relatedImages.map(el => Cache.del(`image:${el.id}`))
+        );
+
+        return result.result;
+    }
+
+    static async getAll() {
+        const results = await prisma.genContentCategory.findMany({
+            orderBy: {name: "asc"},
+            select: {
+                id: true,
+                name: true,
+                basePrompt: true
             }
         });
 
-        await Cache.del(`${this.CACHE_PREFIX}:${id}`);
+        return results;
     }
 }

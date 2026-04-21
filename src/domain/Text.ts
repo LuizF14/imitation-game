@@ -1,3 +1,5 @@
+import { ValidationError } from "../errors/errors.js";
+
 export class Text {
     private _value! : string;
     private _maxLength : number;
@@ -9,10 +11,10 @@ export class Text {
 
     set value(value : string) {
         if (value.length >= this._maxLength) {
-            throw new Error(`Text cannot exceed ${this._maxLength} characters. `);
+            throw new ValidationError(`Text cannot exceed ${this._maxLength} characters. `);
         }
         if (value.trim().length === 0) {
-            throw new Error("Text cannot be empty.");
+            throw new ValidationError("Text cannot be empty.");
         }
         this._value = value;
     }

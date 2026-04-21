@@ -1,3 +1,5 @@
+import { ValidationError } from "../errors/errors.js";
+
 export class Score {
     private _value! : number;
     
@@ -6,7 +8,7 @@ export class Score {
     }
 
     add(points: number): void {
-        if (points < 0) throw new Error("Cannot add negative points.");
+        if (points < 0) throw new ValidationError("Cannot add negative points.");
         this._value += points;
     }
 

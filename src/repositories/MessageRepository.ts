@@ -1,4 +1,4 @@
-import { prisma } from "../prisma.js";
+import { prisma } from "../lib/prisma.js";
 import { Cache } from "./cache/Cache.js";
 
 export class MessageRepository {

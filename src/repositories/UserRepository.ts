@@ -1,4 +1,4 @@
-import { prisma } from "../prisma.js";
+import { prisma } from "../lib/prisma.js";
 import { Cache } from "./cache/Cache.js";
 
 export class UserRepository {
@@ -19,8 +19,6 @@ export class UserRepository {
             where: {email: email}
         });
 
-        if (!prismaUser) throw new Error("User not found");
-
         return prismaUser;
     }
 
@@ -35,25 +33,25 @@ export class UserRepository {
             where: { id }
         });
 
-        if (!prismaUser) {
-            throw new Error("User not found");
+        if (prismaUser) {
+            await Cache.set(`${this.CACHE_PREFIX}:${id}`, prismaUser);
         }
 
-        await Cache.set(`${this.CACHE_PREFIX}:${id}`, prismaUser);
         return prismaUser;
     }
 
-    static async update(data : Partial<{username: string, password: string, score: number}>, id: string) {
-        await prisma.user.update({
+    static async update(data : Partial<{username: string, score: number}>, id: string) {
+        const user = await prisma.user.update({
             where: { id },
             data: data
         });
 
         await Cache.del(`${this.CACHE_PREFIX}:${id}`);
+        return user;
     }
 
     static async delete(id : string) {
-        await prisma.user.update({
+        const user = await prisma.user.update({
             where: { id },
             data: {
                 deletedAt: new Date()
@@ -61,5 +59,6 @@ export class UserRepository {
         });
 
         await Cache.del(`${this.CACHE_PREFIX}:${id}`);
+        return user;
     }
 }
