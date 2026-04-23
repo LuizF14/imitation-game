@@ -14,6 +14,14 @@ export class AdminRepository {
         });
     }
 
+    static async findByEmail(email : string) {
+        const prismaAdmin = await prisma.user.findUnique({
+            where: {email: email}
+        });
+
+        return prismaAdmin;
+    }
+
     static async findById(id : string) {
         const cached = await Cache.get(`${this.CACHE_PREFIX}:${id}`);
         
@@ -25,11 +33,10 @@ export class AdminRepository {
             where: { id }
         });
 
-        if (!prismaAdmin) {
-            throw new Error("Admin not found");
+        if (prismaAdmin) {
+            await Cache.set(`${this.CACHE_PREFIX}:${id}`, prismaAdmin);
         }
 
-        await Cache.set(`${this.CACHE_PREFIX}:${id}`, prismaAdmin);
         return prismaAdmin;
     }
 

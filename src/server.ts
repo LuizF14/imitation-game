@@ -1,6 +1,6 @@
 import { buildApp } from "./app.js";
 
-const app = buildApp();
+const app = await buildApp();
 
 export const start = async () => {
     try {

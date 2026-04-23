@@ -4,8 +4,23 @@ import { AppError } from "./errors/errors.js";
 import aimodelRoutes from "./routers/aimodel.route.js";
 import aiproviderRoutes from "./routers/aiprovider.route.js";
 
-export function buildApp() {
+export async function buildApp() {
     const app = Fastify({ logger: true });
+
+    await app.register(import("@fastify/swagger"), {
+        openapi: {
+            info: {
+            title: "Minha API",
+            description: "Documentação da API",
+            version: "1.0.0"
+            }
+        }
+    });
+
+    await app.register(import("@fastify/swagger-ui"), {
+        routePrefix: "/docs"
+    });
+    
     app.register(userRoutes);
     app.register(aiproviderRoutes);
     app.register(aimodelRoutes);
