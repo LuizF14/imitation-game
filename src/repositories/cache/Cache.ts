@@ -16,8 +16,9 @@ export class Cache {
     await redis.set(key, JSON.stringify(value), "EX", ttlSeconds);
   }
 
-  static async del(key: string) {
-    await redis.del(key);
+  static async del(key: string | string[]) {
+    const keys = Array.isArray(key) ? key : [key];
+    await redis.del(...keys);;
   }
 
   static async addToList(key: string, value: unknown) {
@@ -26,5 +27,18 @@ export class Cache {
 
   static async getList(key: string) {
     return await redis.lrange(key, 0, -1);
+  }
+
+  static async addToSet(key: string, value: string, ttlSeconds=500) {
+    await redis.sadd(key, value);
+    await redis.expire(key, ttlSeconds);
+  }
+
+  static async removeFromSet(key: string, value: string) {
+    await redis.srem(key, value);
+  }
+
+  static async getMembers(key: string) {
+    return await redis.smembers(key);
   }
 }

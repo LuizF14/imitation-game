@@ -3,6 +3,7 @@ import userRoutes from "./routers/user.route.js";
 import { AppError } from "./errors/errors.js";
 import aimodelRoutes from "./routers/aimodel.route.js";
 import aiproviderRoutes from "./routers/aiprovider.route.js";
+import adminRoutes from "./routers/admin.route.js";
 
 export async function buildApp() {
     const app = Fastify({ logger: true });
@@ -24,6 +25,7 @@ export async function buildApp() {
     app.register(userRoutes);
     app.register(aiproviderRoutes);
     app.register(aimodelRoutes);
+    app.register(adminRoutes);
     app.setErrorHandler((error, request, reply) => {
         if (error instanceof AppError) {
             return reply.status(error.statusCode).send({

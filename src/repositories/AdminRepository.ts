@@ -15,7 +15,7 @@ export class AdminRepository {
     }
 
     static async findByEmail(email : string) {
-        const prismaAdmin = await prisma.user.findUnique({
+        const prismaAdmin = await prisma.admin.findUnique({
             where: {email: email}
         });
 
@@ -50,7 +50,7 @@ export class AdminRepository {
     }
 
     static async delete(id : string) {
-        await prisma.admin.update({
+        const admin = await prisma.admin.update({
             where: { id },
             data: {
                 deletedAt: new Date()
@@ -58,5 +58,17 @@ export class AdminRepository {
         });
 
         await Cache.del(`${this.CACHE_PREFIX}:${id}`);
+        return admin;
+    }
+
+    static async getAll() {
+        return await prisma.admin.findMany({
+            orderBy: {name: 'asc'},
+            select: {
+                id: true,
+                name: true,
+                email: true
+            }
+        });
     }
 }

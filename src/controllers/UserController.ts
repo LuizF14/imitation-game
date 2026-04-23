@@ -42,8 +42,7 @@ export class UserController {
         if (!isValid) throw new ValidationError("Login failed");
 
         const payload = {
-            id: user.id,
-            email: user.email
+            id: user.id
         };
 
         const accessToken = JWT.generateAccessToken(payload);
@@ -68,7 +67,6 @@ export class UserController {
         let decoded: any;
 
         try {
-            console.log(refreshToken);
             decoded = JWT.verifyRefreshToken(refreshToken);
         } catch {
             throw new ValidationError("Invalid refresh token");
@@ -83,15 +81,13 @@ export class UserController {
         await RefreshTokenRepository.delete(decoded.jti);
 
         const { refreshToken: newRefreshToken, jti: newJti } = JWT.generateRefreshToken({
-            id: decoded.id,
-            email: decoded.email
+            id: decoded.id
         });
 
         await RefreshTokenRepository.create(newJti, decoded.id);
 
         const newAccessToken = JWT.generateAccessToken({
-            id: decoded.id,
-            email: decoded.email
+            id: decoded.id
         });
 
         return reply.send({
@@ -164,6 +160,8 @@ export class UserController {
         if (!user) {
             throw new ValidationError("User not found");
         }
+
+        await RefreshTokenRepository.deleteAllFromUser(id);
 
         return reply.status(200).send({
             message: "User deleted successfully"

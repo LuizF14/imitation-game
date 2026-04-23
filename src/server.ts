@@ -12,4 +12,8 @@ export const start = async () => {
     }
 }
 
+// import { Password } from "./domain/Password.js";
+// import { AdminRepository } from "./repositories/AdminRepository.js";
+// AdminRepository.create("luizfelipe", "luizfelipe@gmail.com", (await Password.createFromPlainText("hello123")).hash);
+
 start();

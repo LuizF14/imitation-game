@@ -16,7 +16,7 @@ export class AIProviderRepository {
     }
 
     static async findByEmail(email : string) {
-        const prismaProvider = await prisma.aIProvider.findUnique({
+        const prismaProvider = await prisma.aIProvider.findFirst({
             where: {email: email}
         });
 
@@ -30,7 +30,7 @@ export class AIProviderRepository {
             return cached;
         }
 
-        const prismaProvider = await prisma.aIProvider.findUnique({
+        const prismaProvider = await prisma.aIProvider.findFirst({
             where: { id }
         });
 
