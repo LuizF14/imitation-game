@@ -25,36 +25,38 @@ export class AIModelRepository {
         }
 
         const prismaModel = await prisma.aIModel.findUnique({
-            where: { id }
+            where: { id },
+            include: {
+                provider: true
+            }
         });
 
-        if (!prismaModel) {
-            throw new Error("AIModel not found");
+        if (prismaModel) {
+            await Cache.set(`${this.CACHE_PREFIX}:${id}`, prismaModel);
         }
 
-        await Cache.set(`${this.CACHE_PREFIX}:${id}`, prismaModel);
         return prismaModel;
     }
 
-    static async update(data : Partial<{pathURL: string, score: number}>, id : string) {
+    static async update(data : Partial<{pathURL: string}>, modelId : string, providerId : string) {
         const model = await prisma.aIModel.update({
-            where: { id },
+            where: { id: modelId, providerId: providerId },
             data: data
         });
 
-        await Cache.del(`${this.CACHE_PREFIX}:${id}`);
+        await Cache.del(`${this.CACHE_PREFIX}:${modelId}`);
         return model;
     }
 
-    static async delete(id : string) {
+    static async delete(modelId : string, providerId : string) {
         const model = await prisma.aIModel.update({
-            where: { id },
+            where: { id: modelId, providerId: providerId },
             data: {
                 deletedAt: new Date()
             }
         });
 
-        await Cache.del(`${this.CACHE_PREFIX}:${id}`);
+        await Cache.del(`${this.CACHE_PREFIX}:${modelId}`);
         return model;
     }
 
@@ -77,7 +79,7 @@ export class AIModelRepository {
     }
 
 
-    static async getLeaderboard(top: number) {
+    static async getLeaderboard() {
         const cacheKey = `${this.CACHE_PREFIX}:leaderboard`;
         const cached = await Cache.get(cacheKey);
         if (cached) return cached;
@@ -86,11 +88,12 @@ export class AIModelRepository {
             orderBy: {
                 score: "desc"
             },
-            take: top,
+            take: 50,
             select: {
                 id: true,
                 name: true,
-                score: true
+                score: true,
+                pathURL: true
             }
         });
 
