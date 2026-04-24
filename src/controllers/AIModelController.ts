@@ -9,7 +9,7 @@ import { UriPath } from '../domain/UriPath.js';
 
 export class AIModelController {
     registerModel = async (request: FastifyRequest<{Body: AIModel}>, reply: FastifyReply) => {
-        const providerId = request.provider?.id;
+        const providerId = request.decodedJWT?.id;
         if (!providerId) throw new UnauthorizedError("Token is invalid");
         const provider = await AIProviderRepository.findById(providerId);
         if (!provider) throw new ValidationError("This provider doesnt exist");
@@ -22,7 +22,7 @@ export class AIModelController {
         const newModel = await AIModelRepository.create(
             name.value,
             provider.id,
-            apiKey.hashKey(),
+            ApiKey.hashKey(apiKey.plainKey),
             pathUrl.value,
             data.type
         );
@@ -63,7 +63,7 @@ export class AIModelController {
 
     updateModel = async (request: FastifyRequest<{Params: {id: string}; Body: AIModel}>, reply: FastifyReply) => {
         const modelId = request.params.id;
-        const providerId = request.provider?.id;
+        const providerId = request.decodedJWT?.id;
         if (!providerId) throw new UnauthorizedError("Token is invalid");
         const data = request.body;
 
@@ -90,7 +90,7 @@ export class AIModelController {
 
     deleteModel = async (request: FastifyRequest<{Params: {id: string}}>, reply: FastifyReply) => {
         const modelId = request.params.id;
-        const providerId = request.provider?.id;
+        const providerId = request.decodedJWT?.id;
         if (!providerId) throw new UnauthorizedError("Token is invalid");
 
         const model = await AIModelRepository.delete(modelId, providerId);

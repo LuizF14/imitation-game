@@ -15,7 +15,7 @@ export class UserRepository {
     }
 
     static async findByEmail(email : string) {
-        const prismaUser = await prisma.user.findUnique({
+        const prismaUser = await prisma.user.findFirst({
             where: {email: email}
         });
 

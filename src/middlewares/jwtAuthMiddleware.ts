@@ -1,18 +1,20 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
-import { JWT } from "../domain/JWT.js";
 import { UnauthorizedError } from "../errors/errors.js";
+import { JWT } from "../domain/JWT.js";
+import type { Roles } from "./rolesEnum.js";
 
-interface DecodedUser {
+interface DecodedJWT {
   id: string;
+  role: Roles;
 }
 
 declare module "fastify" {
   interface FastifyRequest {
-    user?: DecodedUser;
+    decodedJWT?: DecodedJWT;
   }
 }
 
-export async function userAuthMiddleware(request: FastifyRequest<any>, reply: FastifyReply) {
+export async function jwtAuthMiddleware(request: FastifyRequest<any>, reply: FastifyReply) {
     const authHeader = request.headers.authorization;
 
     if (!authHeader) {
@@ -25,10 +27,6 @@ export async function userAuthMiddleware(request: FastifyRequest<any>, reply: Fa
     }
     const token = parts[1] as string;
 
-    try {
-        const decoded = JWT.verifyAccessToken(token) as DecodedUser;
-        request.user = decoded;
-    } catch {
-        throw new UnauthorizedError("Invalid token");
-    }
+    const decoded = JWT.verifyAccessToken(token) as DecodedJWT;
+    request.decodedJWT = decoded;
 }

@@ -17,6 +17,33 @@ export class AIModelRepository {
         });
     }
 
+    static async findByApiKey(apiKey: string) {
+        const cached = await Cache.get(`${this.CACHE_PREFIX}:${apiKey}`);
+        
+        if (cached) {
+            return cached;
+        }
+        
+        const prismaModel = await prisma.aIModel.findFirst({
+            where: { apiKey: apiKey },
+            select: {
+                id: true,
+                pathURL: true,
+                provider: {
+                    select: {
+                        baseURL: true
+                    }
+                }
+            }
+        });
+
+        if (prismaModel) {
+            await Cache.set(`${this.CACHE_PREFIX}:${apiKey}`, prismaModel);
+        }
+
+        return prismaModel;
+    }
+
     static async findById(id : string) {
         const cached = await Cache.get(`${this.CACHE_PREFIX}:${id}`);
         
@@ -24,7 +51,7 @@ export class AIModelRepository {
             return cached;
         }
 
-        const prismaModel = await prisma.aIModel.findUnique({
+        const prismaModel = await prisma.aIModel.findFirst({
             where: { id },
             include: {
                 provider: true

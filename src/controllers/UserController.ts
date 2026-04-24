@@ -42,7 +42,8 @@ export class UserController {
         if (!isValid) throw new ValidationError("Login failed");
 
         const payload = {
-            id: user.id
+            id: user.id,
+            role: 'user'
         };
 
         const accessToken = JWT.generateAccessToken(payload);
@@ -81,13 +82,15 @@ export class UserController {
         await RefreshTokenRepository.delete(decoded.jti);
 
         const { refreshToken: newRefreshToken, jti: newJti } = JWT.generateRefreshToken({
-            id: decoded.id
+            id: decoded.id,
+            role: 'user'
         });
 
         await RefreshTokenRepository.create(newJti, decoded.id);
 
         const newAccessToken = JWT.generateAccessToken({
-            id: decoded.id
+            id: decoded.id,
+            role: 'user'
         });
 
         return reply.send({
@@ -113,7 +116,7 @@ export class UserController {
     };
 
     getMe = async (request: FastifyRequest, reply: FastifyReply) => {
-        const id = request.user?.id;
+        const id = request.decodedJWT?.id;
         if (!id) throw new UnauthorizedError("Token is invalid");
 
         const user = await UserRepository.findById(id);
@@ -126,7 +129,7 @@ export class UserController {
     };
 
     updateMe = async (request: FastifyRequest<{Body: User}>, reply: FastifyReply) => {
-        const id = request.user?.id;
+        const id = request.decodedJWT?.id;
         if (!id) throw new UnauthorizedError("Token is invalid");
         const data = request.body;
 
@@ -152,7 +155,7 @@ export class UserController {
     };
 
     deleteMe = async (request: FastifyRequest, reply: FastifyReply) => {
-        const id = request.user?.id;
+        const id = request.decodedJWT?.id;
         if (!id) throw new UnauthorizedError("Token is invalid");
 
         const user = await UserRepository.delete(id);

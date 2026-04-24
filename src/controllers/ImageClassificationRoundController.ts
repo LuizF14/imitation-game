@@ -1,5 +1,7 @@
+import type { FastifyRequest, FastifyReply } from 'fastify';
+
 export class ImageClassificationRoundController {
-    //  = async (request: FastifyRequest, reply: FastifyReply) => {
-    // }
+    start = async (request: FastifyRequest, reply: FastifyReply) => {
+    }
 }
 export const imageClassificationRoundController = new ImageClassificationRoundController()

@@ -45,7 +45,8 @@ export class AIProviderController {
         if (!isValid) throw new ValidationError("Login failed");
 
         const payload = {
-            id: provider.id
+            id: provider.id,
+            role: 'provider'
         };
 
         const accessToken = JWT.generateAccessToken(payload);
@@ -84,13 +85,15 @@ export class AIProviderController {
         await RefreshTokenRepository.delete(decoded.jti);
 
         const { refreshToken: newRefreshToken, jti: newJti } = JWT.generateRefreshToken({
-            id: decoded.id
+            id: decoded.id,
+            role: 'provider'
         });
 
         await RefreshTokenRepository.create(newJti, decoded.id);
 
         const newAccessToken = JWT.generateAccessToken({
-            id: decoded.id
+            id: decoded.id,
+            role: 'provider'
         });
 
         return reply.send({
@@ -117,7 +120,7 @@ export class AIProviderController {
     };
 
     getMe = async (request: FastifyRequest, reply: FastifyReply) => {
-        const id = request.provider?.id;
+        const id = request.decodedJWT?.id;
         if (!id) throw new UnauthorizedError("Token is invalid");
 
         const provider = await AIProviderRepository.findById(id);
@@ -147,7 +150,7 @@ export class AIProviderController {
     };
 
     updateMe = async (request: FastifyRequest<{Body: AIProvider}>, reply: FastifyReply) => {
-        const id = request.provider?.id;
+        const id = request.decodedJWT?.id;
         if (!id) throw new UnauthorizedError("Token is invalid");
         const data = request.body;
 
@@ -178,7 +181,7 @@ export class AIProviderController {
     };
 
     deleteMe = async (request: FastifyRequest, reply: FastifyReply) => {
-        const id = request.provider?.id;
+        const id = request.decodedJWT?.id;
         if (!id) throw new UnauthorizedError("Token is invalid");
 
         const provider = await AIProviderRepository.delete(id);

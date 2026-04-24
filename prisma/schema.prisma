@@ -157,7 +157,7 @@ model Image {
 
 model GenContentCategory {
   id          String  @id @default(uuid()) 
-  name        String  @unique @db.VarChar(40)
+  name        String  @db.VarChar(40)
   basePrompt  String  @db.VarChar(1024)
 
   images Image[]

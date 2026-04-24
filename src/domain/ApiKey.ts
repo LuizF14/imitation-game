@@ -15,8 +15,8 @@ export class ApiKey {
         return new ApiKey(apiKey);
     }
 
-    hashKey() : string {
-        return crypto.createHash("sha256").update(this._key).digest("hex");
+    static hashKey(key : string) : string {
+        return crypto.createHash("sha256").update(key).digest("hex");
     }
 
     get plainKey() {

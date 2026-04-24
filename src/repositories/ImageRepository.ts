@@ -10,8 +10,12 @@ export class ImageRepository {
             data: {
                 imageURL: imageURL,
                 isAI: HumanOrAIEnum.HUMAN,
-                categoryId: categoryId,
-                fromAdminId: adminId
+                category: {
+                    connect: {id: categoryId}
+                },
+                fromAdmin: {
+                    connect: {id: adminId}
+                }
             }
         });
     }
@@ -21,8 +25,12 @@ export class ImageRepository {
             data: {
                 imageURL: imageURL,
                 isAI: HumanOrAIEnum.AI,
-                categoryId: categoryId,
-                fromModelId: modelId
+                category: {
+                    connect: {id: categoryId}
+                },
+                fromModel: {
+                    connect: {id: modelId}
+                }
             }
         });
     }
@@ -34,35 +42,38 @@ export class ImageRepository {
             return cached;
         }
 
-        const prismaImage = await prisma.image.findUnique({
-            where: { id }
+        const prismaImage = await prisma.image.findFirst({
+            where: { id },
+            select: {
+                id: true,
+                imageURL: true,
+                score: true,
+                isAI: true,
+                categoryId: true,
+                category: {
+                    select: {
+                        name: true
+                    }
+                }
+            }
         });
 
-        if (!prismaImage) {
-            throw new Error("Image not found");
+        if (prismaImage) {
+            await Cache.set(`${this.CACHE_PREFIX}:${id}`, prismaImage);
         }
 
-        await Cache.set(`${this.CACHE_PREFIX}:${id}`, prismaImage);
         return prismaImage;
     }
 
-    static async update(data : Partial<{imageURL: string, score: number}>, id : string) {
-        await prisma.image.update({
-            where: { id },
-            data: data
-        });
-
-        await Cache.del(`${this.CACHE_PREFIX}:${id}`);
-    }
-
-    static async delete(id : string) {
-        await prisma.image.update({
-            where: { id },
+    static async delete(imageId : string, fromId: string) {
+        const image = await prisma.image.update({
+            where: { id: imageId, OR: [{fromAdminId: fromId}, {fromModelId: fromId}] },
             data: {
                 deletedAt: new Date()
             }
         });
 
-        await Cache.del(`${this.CACHE_PREFIX}:${id}`);
+        await Cache.del(`${this.CACHE_PREFIX}:${imageId}`);
+        return image;
     }
 }
