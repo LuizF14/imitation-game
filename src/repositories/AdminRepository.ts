@@ -15,7 +15,7 @@ export class AdminRepository {
     }
 
     static async findByEmail(email : string) {
-        const prismaAdmin = await prisma.admin.findUnique({
+        const prismaAdmin = await prisma.admin.findFirst({
             where: {email: email}
         });
 

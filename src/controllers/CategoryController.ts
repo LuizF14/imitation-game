@@ -2,7 +2,7 @@ import type { FastifyRequest, FastifyReply } from 'fastify';
 import type { GenContentCategory } from '../../generated/prisma/client.js';
 import { Text } from '../domain/Text.js';
 import { CategoryRepository } from '../repositories/CategoryRepository.js';
-import { ValidationError } from '../errors/errors.js';
+import { UnauthorizedError, ValidationError } from '../errors/errors.js';
 
 export class CategoryController {
     addCategory = async (request: FastifyRequest<{Body: GenContentCategory}>, reply: FastifyReply) => {
