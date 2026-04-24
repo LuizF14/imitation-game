@@ -75,6 +75,20 @@ export class AIModelRepository {
         return model;
     }
 
+    static async updateScore(score: number, modelId : string) {
+        const model = await prisma.aIModel.update({
+            where: { id: modelId },
+            data: {
+                score: {
+                    increment: score
+                }
+            }
+        });
+
+        await Cache.del(`${this.CACHE_PREFIX}:${modelId}`);
+        return model;
+    }
+
     static async delete(modelId : string, providerId : string) {
         const model = await prisma.aIModel.update({
             where: { id: modelId, providerId: providerId },

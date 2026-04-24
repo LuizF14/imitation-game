@@ -40,10 +40,24 @@ export class UserRepository {
         return prismaUser;
     }
 
-    static async update(data : Partial<{username: string, score: number}>, id: string) {
+    static async update(data : Partial<{username: string}>, id: string) {
         const user = await prisma.user.update({
             where: { id },
             data: data
+        });
+
+        await Cache.del(`${this.CACHE_PREFIX}:${id}`);
+        return user;
+    }
+
+    static async updateScore(score: number, id: string) {
+        const user = await prisma.user.update({
+            where: { id },
+            data: {
+                score: {
+                    increment: score
+                }
+            }
         });
 
         await Cache.del(`${this.CACHE_PREFIX}:${id}`);

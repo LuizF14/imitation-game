@@ -1,6 +1,7 @@
 import { HumanOrAIEnum } from "../../generated/prisma/enums.js";
 import { prisma } from "../lib/prisma.js";
 import { Cache } from "./cache/Cache.js";
+import type { Image } from "../../generated/prisma/client.js";
 
 export class ImageRepository {
     private static CACHE_PREFIX = "image";
@@ -75,5 +76,33 @@ export class ImageRepository {
 
         await Cache.del(`${this.CACHE_PREFIX}:${imageId}`);
         return image;
+    }
+
+    static async updateScore(score: number, imageId: string){
+        const image = await prisma.image.update({
+            where: { id: imageId },
+            data: {
+                score: {
+                    increment: score
+                }
+            }
+        });
+        
+        await Cache.del(`${this.CACHE_PREFIX}:${imageId}`);
+        return image;
+    }
+
+    static async findRandom() {
+        const [randomItem] = await prisma.$queryRaw<(Image & { categoryName: string })[]>`
+            SELECT 
+                i.*, 
+                c.name AS "categoryName"
+            FROM "Image" i
+            JOIN "GenContentCategory" c ON i."categoryId" = c.id
+            WHERE i."deletedAt" IS NULL
+            ORDER BY RANDOM() 
+            LIMIT 1
+        `;
+        return randomItem;
     }
 }

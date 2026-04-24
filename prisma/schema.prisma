@@ -173,7 +173,7 @@ model ImageClassificationRound {
   userAnswer      HumanOrAIEnum
   timeToAnswerMs  Int
 
-  imageId   String  @unique
+  imageId   String 
   image     Image   @relation(fields: [imageId], references: [id])  
 
   userId    String

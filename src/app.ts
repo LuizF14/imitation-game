@@ -6,6 +6,7 @@ import aiproviderRoutes from "./routers/aiprovider.route.js";
 import adminRoutes from "./routers/admin.route.js";
 import categoryRoutes from "./routers/category.route.js";
 import imageRoutes from "./routers/image.route.js";
+import imageclassificationroundRoutes from "./routers/imageclassificationround.route.js";
 
 export async function buildApp() {
     const app = Fastify({ logger: true });
@@ -30,6 +31,7 @@ export async function buildApp() {
     app.register(adminRoutes);
     app.register(categoryRoutes);
     app.register(imageRoutes);
+    app.register(imageclassificationroundRoutes);
     app.setErrorHandler((error, request, reply) => {
         if (error instanceof AppError) {
             return reply.status(error.statusCode).send({
