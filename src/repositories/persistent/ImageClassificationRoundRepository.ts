@@ -1,6 +1,6 @@
-import type { HumanOrAIEnum } from "../../generated/prisma/enums.js";
-import { prisma } from "../lib/prisma.js";
-import { Cache } from "./cache/Cache.js";
+import type { HumanOrAIEnum } from "../../../generated/prisma/enums.js";
+import { prisma } from "../../lib/prisma.js";
+import { Cache } from "../Cache.js";
 
 export class ImageClassificationRoundRepository {
     private static CACHE_PREFIX = "imageclsround";

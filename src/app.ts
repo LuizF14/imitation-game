@@ -1,4 +1,6 @@
 import Fastify from "fastify";
+import fastifyWebsocket from "@fastify/websocket";
+
 import userRoutes from "./routers/user.route.js";
 import { AppError } from "./errors/errors.js";
 import aimodelRoutes from "./routers/aimodel.route.js";
@@ -7,9 +9,12 @@ import adminRoutes from "./routers/admin.route.js";
 import categoryRoutes from "./routers/category.route.js";
 import imageRoutes from "./routers/image.route.js";
 import imageclassificationroundRoutes from "./routers/imageclassificationround.route.js";
+import chatsessionRoutes from "./routers/chatsession.route.js";
 
 export async function buildApp() {
     const app = Fastify({ logger: true });
+
+    app.register(fastifyWebsocket);
 
     await app.register(import("@fastify/swagger"), {
         openapi: {
@@ -24,7 +29,7 @@ export async function buildApp() {
     await app.register(import("@fastify/swagger-ui"), {
         routePrefix: "/docs"
     });
-    
+
     app.register(userRoutes);
     app.register(aiproviderRoutes);
     app.register(aimodelRoutes);
@@ -32,6 +37,7 @@ export async function buildApp() {
     app.register(categoryRoutes);
     app.register(imageRoutes);
     app.register(imageclassificationroundRoutes);
+    app.register(chatsessionRoutes);
     app.setErrorHandler((error, request, reply) => {
         if (error instanceof AppError) {
             return reply.status(error.statusCode).send({

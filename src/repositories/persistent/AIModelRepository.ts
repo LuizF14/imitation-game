@@ -1,6 +1,6 @@
-import { prisma } from "../lib/prisma.js";
-import { Cache } from "./cache/Cache.js";
-import { AIModelType } from "../../generated/prisma/client.js";
+import { prisma } from "../../lib/prisma.js";
+import { Cache } from "../Cache.js";
+import { AIModelType } from "../../../generated/prisma/client.js";
 
 export class AIModelRepository {
     private static CACHE_PREFIX = "aimodel";

@@ -1,5 +1,5 @@
-import { prisma } from "../lib/prisma.js";
-import { Cache } from "./cache/Cache.js";
+import { prisma } from "../../lib/prisma.js";
+import { Cache } from "../Cache.js";
 
 export class CategoryRepository {
     private static CACHE_PREFIX = "imagecategory";

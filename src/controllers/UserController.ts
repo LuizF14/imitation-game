@@ -1,6 +1,6 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
-import { UserRepository } from '../repositories/UserRepository.js';
-import { RefreshTokenRepository } from '../repositories/RefreshTokenRepository.js';
+import { UserRepository } from '../repositories/persistent/UserRepository.js';
+import { RefreshTokenRepository } from '../repositories/volatile/RefreshTokenRepository.js';
 import type { User } from '../../generated/prisma/client.js';
 import { Password } from '../domain/Password.js';
 import { Email } from '../domain/Email.js';

@@ -1,6 +1,6 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { UnauthorizedError } from "../errors/errors.js";
-import { AIModelRepository } from "../repositories/AIModelRepository.js";
+import { AIModelRepository } from "../repositories/persistent/AIModelRepository.js";
 import { Url } from "../domain/Url.js";
 import { UriPath } from "../domain/UriPath.js";
 import { ApiKey } from "../domain/ApiKey.js";

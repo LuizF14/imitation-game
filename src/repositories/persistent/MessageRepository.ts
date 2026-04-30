@@ -1,5 +1,7 @@
-import { prisma } from "../lib/prisma.js";
-import { Cache } from "./cache/Cache.js";
+import { prisma } from "../../lib/prisma.js";
+import { Cache } from "../Cache.js";
+
+type TransactionClient = Parameters<Parameters<typeof prisma.$transaction>[0]>[0];
 
 export class MessageRepository {
     private static CACHE_PREFIX = "chatsession";
@@ -19,14 +21,11 @@ export class MessageRepository {
         return await Cache.getList(key);
     }
 
-    static async endSession(sessionId: string) {
+    static async persist(sessionId: string, tx?: TransactionClient) {
         const key = `${this.CACHE_PREFIX}:${sessionId}:${this.CACHE_SUFIX}`;
-
         const messages = await Cache.getList(key);
 
-        if (!messages || messages.length === 0) {
-            return; 
-        }
+        if (!messages || messages.length === 0) return; 
 
         const parsedMessages = messages.map(raw => {
             const m = typeof raw === "string" ? JSON.parse(raw) : raw;
@@ -39,10 +38,9 @@ export class MessageRepository {
             };
         });
 
-        await prisma.message.createMany({
-            data: parsedMessages
-        });
+        const client = tx ?? prisma;
 
+        await client.message.createMany({ data: parsedMessages });
         await Cache.del(key);
     }
 }

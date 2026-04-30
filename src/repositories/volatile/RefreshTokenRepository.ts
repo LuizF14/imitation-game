@@ -1,4 +1,4 @@
-import { Cache } from "./cache/Cache.js";
+import { Cache } from "../Cache.js";
 
 export class RefreshTokenRepository {
     private static CACHE_PREFIX = "refreshtoken";

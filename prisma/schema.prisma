@@ -207,10 +207,10 @@ model Player {
   type                HumanOrAIEnum
 
   userId              String?
-  user                User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                User?              @relation(fields: [userId], references: [id])
 
   aiId                String?
-  ai                  AIModel?           @relation(fields: [aiId], references: [id], onDelete: Cascade)
+  ai                  AIModel?           @relation(fields: [aiId], references: [id])
 
   messages            Message[]       
   sessionAsPlayer1    ChatSession[]     @relation("Player1Session")

@@ -1,10 +1,10 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import { AppError, UnauthorizedError } from '../errors/errors.js';
-import { ImageClassificationRoundRepository } from '../repositories/ImageClassificationRoundRepository.js';
-import { ImageRepository } from '../repositories/ImageRepository.js';
+import { ImageClassificationRoundRepository } from '../repositories/persistent/ImageClassificationRoundRepository.js';
+import { ImageRepository } from '../repositories/persistent/ImageRepository.js';
 import { HumanOrAIEnum } from '../../generated/prisma/enums.js';
-import { UserRepository } from '../repositories/UserRepository.js';
-import { AIModelRepository } from '../repositories/AIModelRepository.js';
+import { UserRepository } from '../repositories/persistent/UserRepository.js';
+import { AIModelRepository } from '../repositories/persistent/AIModelRepository.js';
 import { UserScore } from '../domain/UserScore.js';
 import { ImageScore } from '../domain/ImageScore.js';
 import { ModelScore } from '../domain/ModelScore.js';

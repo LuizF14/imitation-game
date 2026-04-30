@@ -1,9 +1,9 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
-import { AIModelRepository } from '../repositories/AIModelRepository.js';
+import { AIModelRepository } from '../repositories/persistent/AIModelRepository.js';
 import type { AIModel } from '../../generated/prisma/client.js';
 import { Text } from '../domain/Text.js';
 import { ApiKey } from '../domain/ApiKey.js';
-import { AIProviderRepository } from '../repositories/AIProviderRepository.js';
+import { AIProviderRepository } from '../repositories/persistent/AIProviderRepository.js';
 import { AppError, UnauthorizedError, ValidationError } from '../errors/errors.js';
 import { UriPath } from '../domain/UriPath.js';
 

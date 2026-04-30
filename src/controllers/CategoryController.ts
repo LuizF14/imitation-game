@@ -1,7 +1,7 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import type { GenContentCategory } from '../../generated/prisma/client.js';
 import { Text } from '../domain/Text.js';
-import { CategoryRepository } from '../repositories/CategoryRepository.js';
+import { CategoryRepository } from '../repositories/persistent/CategoryRepository.js';
 import { UnauthorizedError, ValidationError } from '../errors/errors.js';
 
 export class CategoryController {

@@ -1,0 +1,1 @@
+export const WebSocketsMap = new Map<string, WebSocket>();

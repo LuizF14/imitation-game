@@ -1,6 +1,6 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import type { Image } from '../../generated/prisma/client.js';
-import { ImageRepository } from '../repositories/ImageRepository.js';
+import { ImageRepository } from '../repositories/persistent/ImageRepository.js';
 import { Url } from '../domain/Url.js';
 import { UnauthorizedError, ValidationError } from '../errors/errors.js';
 

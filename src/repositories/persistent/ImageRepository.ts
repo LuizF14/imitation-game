@@ -1,7 +1,7 @@
-import { HumanOrAIEnum } from "../../generated/prisma/enums.js";
-import { prisma } from "../lib/prisma.js";
-import { Cache } from "./cache/Cache.js";
-import type { Image } from "../../generated/prisma/client.js";
+import { HumanOrAIEnum } from "../../../generated/prisma/enums.js";
+import { prisma } from "../../lib/prisma.js";
+import { Cache } from "../Cache.js";
+import type { Image } from "../../../generated/prisma/client.js";
 
 export class ImageRepository {
     private static CACHE_PREFIX = "image";

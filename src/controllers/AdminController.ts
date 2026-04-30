@@ -1,12 +1,12 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import type { Admin } from '../../generated/prisma/client.js';
-import { AdminRepository } from '../repositories/AdminRepository.js';
+import { AdminRepository } from '../repositories/persistent/AdminRepository.js';
 import { Password } from '../domain/Password.js';
 import { ValidationError } from '../errors/errors.js';
 import { Email } from '../domain/Email.js';
 import { Text } from '../domain/Text.js';
 import { JWT } from '../domain/JWT.js';
-import { RefreshTokenRepository } from '../repositories/RefreshTokenRepository.js';
+import { RefreshTokenRepository } from '../repositories/volatile/RefreshTokenRepository.js';
 
 export class AdminController {
     register = async (request: FastifyRequest<{Body: Admin}>, reply: FastifyReply) => {

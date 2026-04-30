@@ -1,13 +1,13 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import { UnauthorizedError, ValidationError } from '../errors/errors.js';
 import type { AIProvider } from '../../generated/prisma/client.js';
-import { AIProviderRepository } from '../repositories/AIProviderRepository.js';
+import { AIProviderRepository } from '../repositories/persistent/AIProviderRepository.js';
 import { Email } from '../domain/Email.js';
 import { Text } from '../domain/Text.js';
 import { Password } from '../domain/Password.js';
 import { Url } from '../domain/Url.js';
 import { JWT } from '../domain/JWT.js';
-import { RefreshTokenRepository } from '../repositories/RefreshTokenRepository.js';
+import { RefreshTokenRepository } from '../repositories/volatile/RefreshTokenRepository.js';
 
 export class AIProviderController {
     signup = async (request: FastifyRequest<{Body: AIProvider}>, reply: FastifyReply) => {
