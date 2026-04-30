@@ -19,9 +19,23 @@ export async function buildApp() {
     await app.register(import("@fastify/swagger"), {
         openapi: {
             info: {
-            title: "Minha API",
+            title: "Imitation Game",
             description: "Documentação da API",
-            version: "1.0.0"
+            version: "1.0.0",
+            },
+            components: {
+                securitySchemes: {
+                    bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT",
+                    },
+                    apiKey: {                        // ← adicionar isso
+                    type: "apiKey",
+                    in: "header",
+                    name: "x-api-key",            // ajuste para o header que seu middleware usa
+                    },
+                },
             }
         }
     });

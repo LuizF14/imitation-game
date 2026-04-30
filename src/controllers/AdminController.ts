@@ -70,7 +70,7 @@ export class AdminController {
         await RefreshTokenRepository.delete(decoded.jti);
 
         return reply.send({
-            status: "Logged out"
+            message: "Logged out"
         });
     }
 
