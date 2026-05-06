@@ -19,7 +19,7 @@ async function aimodelRoutes(fastify: FastifyInstance) {
           required: ["name", "pathURL", "type"],
           properties: {
             name: { type: "string" },
-            pathURL: { type: "string", format: "uri" },
+            pathURL: { type: "string" },
             type: { type: "string" },
           },
           examples: [
@@ -199,7 +199,7 @@ async function aimodelRoutes(fastify: FastifyInstance) {
           type: "object",
           required: ["pathURL"],
           properties: {
-            pathURL: { type: "string", format: "uri" },
+            pathURL: { type: "string" },
           },
           examples: [
             {

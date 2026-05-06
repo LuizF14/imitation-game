@@ -13,12 +13,22 @@ type SessionEndedPayload = {
     sessionId: string;
 };
 
+type ChatMessagePayload = {
+    type: "NEW_MESSAGE";
+    sessionId: string;
+    to: string;
+    content: string;
+    timestamp: number;
+};
+
+
 
 class MatchmakingEventBus {
     private subscriber = redis.duplicate();
 
     async init() {
         await this.subscriber.subscribe("chatsession");
+        await this.subscriber.subscribe("chatmessage");
         await this.listenToMatch();
     }
 
@@ -48,28 +58,53 @@ class MatchmakingEventBus {
         await redis.publish("chatsession", JSON.stringify(payload));
     }
 
+    async notifyNewMessage(
+        sessionId: string,
+        to: string,
+        content: string
+    ) {
+        const payload: ChatMessagePayload = {
+            type: "NEW_MESSAGE",
+            sessionId,
+            to,
+            content,
+            timestamp: Date.now()
+        };
+
+        await redis.publish("chatmessage", JSON.stringify(payload));
+    }
+
 
     listenToMatch() {
         this.subscriber.on("message", (channel, message) => {
-            if (channel !== "chatsession") return;
-
             try {
                 const data = JSON.parse(message);
 
-                switch (data.type) {
-                    case "MATCH_FOUND":
-                        this.handleMatchFound(data);
-                        break;
-
-                    case "SESSION_ENDED":
-                        this.handleSessionEnded(data);
-                        break;
+                if (channel === "chatsession") {
+                    switch (data.type) {
+                        case "MATCH_FOUND":
+                            this.handleMatchFound(data);
+                            break;
+                        case "SESSION_ENDED":
+                            this.handleSessionEnded(data);
+                            break;
+                    }
                 }
+
+                if (channel === "chatmessage") {
+                    switch (data.type) {
+                        case "NEW_MESSAGE":
+                            this.handleNewMessage(data);
+                            break;
+                    }
+                }
+
             } catch (err) {
                 console.error("Invalid pub/sub message", err);
             }
         });
     }
+
 
     handleMatchFound(data: MatchFoundPayload) {
         const { players, sessionId } = data;
@@ -98,6 +133,18 @@ class MatchmakingEventBus {
         }
     }
 
+    handleNewMessage(data: ChatMessagePayload) {
+        const { to, content, sessionId, timestamp } = data;
+
+        const socket = WebSocketsMap.get(to);
+
+        socket?.send(JSON.stringify({
+            type: "NEW_MESSAGE",
+            sessionId,
+            content,
+            timestamp
+        }));
+    }
 
 }
 

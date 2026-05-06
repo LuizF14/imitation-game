@@ -1,12 +1,17 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import type { WebSocket } from '@fastify/websocket';
 
+import axios from 'axios';
+
 import { ChatSessionRepository } from '../repositories/persistent/ChatSessionRepository.js';
 import { MatchQueueRepository } from '../repositories/volatile/MatchQueueRepository.js';
 import { AppError, UnauthorizedError } from '../errors/errors.js';
 import { HumanOrAIEnum } from '../../generated/prisma/enums.js';
 import { matchmakingEventBus } from '../services/SocketMapStore.js';
 import { WebSocketsMap } from '../domain/WebSocketsMap.js';
+import { AIModelRepository } from '../repositories/persistent/AIModelRepository.js';
+import { UserScore } from '../domain/UserScore.js';
+import { UserRepository } from '../repositories/persistent/UserRepository.js';
 
 export class ChatSessionController {
     start = async (connection : WebSocket, request : FastifyRequest) => { 
@@ -15,19 +20,44 @@ export class ChatSessionController {
     
         WebSocketsMap.set(playerId, connection);
 
-        const {status, opponentId} = await MatchQueueRepository.enqueuePlayer(playerId);
-        if (!opponentId) return connection.send(JSON.stringify({
-            type: "WAITING"
-        }));
+        // const decision = Math.random() < 0.5 ? HumanOrAIEnum.HUMAN : HumanOrAIEnum.AI;
+        const decision =  false ? HumanOrAIEnum.HUMAN : HumanOrAIEnum.AI;; // temporario
 
-        const session = await ChatSessionRepository.create(
-            playerId, 
-            opponentId,
-            HumanOrAIEnum.HUMAN,
-            HumanOrAIEnum.HUMAN
-        );
+        if (decision === HumanOrAIEnum.HUMAN) {
+            const {status, opponentId} = await MatchQueueRepository.enqueuePlayer(playerId);
+            if (!opponentId) return connection.send(JSON.stringify({
+                type: "WAITING"
+            }));
+    
+            const session = await ChatSessionRepository.create(
+                playerId, 
+                opponentId,
+                HumanOrAIEnum.HUMAN,
+                HumanOrAIEnum.HUMAN
+            );
+    
+            await matchmakingEventBus.notifyMatchFound(playerId, opponentId, session.id);
+        } else if (decision === HumanOrAIEnum.AI) {
+            const opponentModel = await AIModelRepository.findById("adc1637d-8ef2-482f-8fa4-c411f122fa20");
 
-        await matchmakingEventBus.notifyMatchFound(playerId, opponentId, session.id);
+            const url = opponentModel.provider.baseURL + opponentModel.pathURL + "/newsession";
+            const sessionId = crypto.randomUUID();
+            const response = await axios.post(url, {sessionId: sessionId});
+            
+            const session = await ChatSessionRepository.create(
+                playerId, 
+                opponentModel.id,
+                HumanOrAIEnum.HUMAN,
+                HumanOrAIEnum.AI,
+                sessionId
+            );
+            
+            return connection.send(JSON.stringify({
+                type: "MATCH_FOUND",
+                sessionId: session.id
+            }));
+        }
+
     }
 
     end = async (request: FastifyRequest, reply: FastifyReply) => { 
@@ -36,17 +66,31 @@ export class ChatSessionController {
         
         const session = await ChatSessionRepository.findActiveByPlayer(playerId);
 
-         if (!session) {
+        if (!session) {
             return new AppError("No active session");
         }
-
-        await ChatSessionRepository.persistSession(session.id);
 
         const opponentId =
         session.player1Id === playerId
             ? session.player2Id
             : session.player1Id;
 
+        const opponentType =
+        session.player1Id === playerId
+            ? session.player2Type
+            : session.player1Type;
+
+        const userAdditionalScore = await UserScore.calculateChatSessionScore(session.turingRate, opponentType);
+
+        await UserRepository.updateScore(userAdditionalScore, playerId);
+
+        await ChatSessionRepository.persistSession(session.id);
+
+        if (opponentType === HumanOrAIEnum.AI) {
+            const opponentModel = await AIModelRepository.findById(opponentId);
+            const url = opponentModel.provider.baseURL + opponentModel.pathURL + "/endsession";
+            await axios.post(url, {sessionId: session.id});
+        }
         await matchmakingEventBus.notifySessionEnded(
             playerId,
             opponentId,

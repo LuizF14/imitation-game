@@ -8,9 +8,9 @@ import { PlayerRepository } from "./PlayerRepository.js";
 export class ChatSessionRepository {
     private static CACHE_PREFIX = "chatsession";
 
-    static async create(player1Id : string, player2Id : string, player1Type : HumanOrAIEnum, player2Type : HumanOrAIEnum) {
+    static async create(player1Id : string, player2Id : string, player1Type : HumanOrAIEnum, player2Type : HumanOrAIEnum, sessionId?: string) {
         const session = {
-            id: crypto.randomUUID(),
+            id: sessionId ?? crypto.randomUUID(),
             startedAt: new Date().toISOString(),
             player1Id: player1Id,
             player2Id: player2Id,

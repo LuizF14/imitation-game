@@ -64,14 +64,14 @@ async function userRoutes(fastify: FastifyInstance) {
             type: "object",
             properties: {
               id: { type: "string" },
-              accessToken: { type: "string" },
-              refreshToken: { type: "string" },
+              access_token: { type: "string" },
+              refresh_token: { type: "string" },
             },
             examples: [
               {
                 id: "clx1abc123",
-                accessToken: "eyJhbGci...",
-                refreshToken: "eyJhbGci...",
+                access_token: "eyJhbGci...",
+                refresh_token: "eyJhbGci...",
               },
             ],
           },
@@ -90,24 +90,24 @@ async function userRoutes(fastify: FastifyInstance) {
         summary: "Refresh access token",
         body: {
           type: "object",
-          required: ["refreshToken"],
+          required: ["refresh_token"],
           properties: {
-            refreshToken: { type: "string" },
+            refresh_token: { type: "string" },
           },
-          examples: [{ refreshToken: "eyJhbGci..." }],
+          examples: [{ refresh_token: "eyJhbGci..." }],
         },
         response: {
           200: {
             description: "Tokens refreshed successfully",
             type: "object",
             properties: {
-              accessToken: { type: "string" },
-              refreshToken: { type: "string" },
+              access_token: { type: "string" },
+              refresh_token: { type: "string" },
             },
             examples: [
               {
-                accessToken: "eyJhbGci...",
-                refreshToken: "eyJhbGci...",
+                access_token: "eyJhbGci...",
+                refresh_token: "eyJhbGci...",
               },
             ],
           },
@@ -126,11 +126,11 @@ async function userRoutes(fastify: FastifyInstance) {
         summary: "User logout",
         body: {
           type: "object",
-          required: ["refreshToken"],
+          required: ["refresh_token"],
           properties: {
-            refreshToken: { type: "string" },
+            refresh_token: { type: "string" },
           },
-          examples: [{ refreshToken: "eyJhbGci..." }],
+          examples: [{ refresh_token: "eyJhbGci..." }],
         },
         response: {
           200: {

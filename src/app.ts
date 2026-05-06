@@ -10,6 +10,8 @@ import categoryRoutes from "./routers/category.route.js";
 import imageRoutes from "./routers/image.route.js";
 import imageclassificationroundRoutes from "./routers/imageclassificationround.route.js";
 import chatsessionRoutes from "./routers/chatsession.route.js";
+import messageRoutes from "./routers/message.route.js";
+import playerJudgmentRoutes from "./routers/playerjudgment.route.js";
 
 export async function buildApp() {
     const app = Fastify({ logger: true });
@@ -52,6 +54,8 @@ export async function buildApp() {
     app.register(imageRoutes);
     app.register(imageclassificationroundRoutes);
     app.register(chatsessionRoutes);
+    app.register(messageRoutes);
+    app.register(playerJudgmentRoutes);
     app.setErrorHandler((error, request, reply) => {
         if (error instanceof AppError) {
             return reply.status(error.statusCode).send({
