@@ -24,13 +24,6 @@ async function chatsessionRoutes(fastify : FastifyInstance) {
             summary: "Encerra uma chat session",
             tags: ["ChatSession"],
             security: [{ bearerAuth: [] }],
-            body: {
-                type: "object",
-                required: ["sessionId"],
-                properties: {
-                sessionId: { type: "string" },
-                },
-            },
             response: {
                 200: {
                 description: "Sessão encerrada com sucesso",

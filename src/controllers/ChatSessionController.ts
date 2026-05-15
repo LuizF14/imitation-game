@@ -38,7 +38,7 @@ export class ChatSessionController {
     
             await matchmakingEventBus.notifyMatchFound(playerId, opponentId, session.id);
         } else if (decision === HumanOrAIEnum.AI) {
-            const opponentModel = await AIModelRepository.findById("adc1637d-8ef2-482f-8fa4-c411f122fa20");
+            const opponentModel = await AIModelRepository.findById("58d3448f-7ce4-42a0-a820-7ff7536663dc");
 
             const url = opponentModel.provider.baseURL + opponentModel.pathURL + "/newsession";
             const sessionId = crypto.randomUUID();
@@ -80,9 +80,9 @@ export class ChatSessionController {
             ? session.player2Type
             : session.player1Type;
 
-        const userAdditionalScore = await UserScore.calculateChatSessionScore(session.turingRate, opponentType);
-
-        await UserRepository.updateScore(userAdditionalScore, playerId);
+        // console.log(session.turingRate, opponentType);
+        // const userAdditionalScore = UserScore.calculateChatSessionScore(session.turingRate, opponentType);
+        // await UserRepository.updateScore(userAdditionalScore, playerId);
 
         await ChatSessionRepository.persistSession(session.id);
 
@@ -98,7 +98,7 @@ export class ChatSessionController {
         );
 
         return reply.send({
-            status: "ended"
+            message: "ended"
         });
     }
 

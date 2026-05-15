@@ -15,12 +15,10 @@ async function messageRoutes(fastify: FastifyInstance) {
             security: [{ bearerAuth: [] }],
             body: {
                 type: "object",
-                required: ["content", "sessionId"],
+                required: ["content"],
                 properties: {
-                    sessionId: { type: "string" },
                     content:   { type: "string" },
-                    senderId:  { type: "string" },
-                    createdAt: { type: "string", format: "date-time" },
+                    creationDurationMs: {type: "number"},
                 },
             },
             response: {
@@ -28,11 +26,7 @@ async function messageRoutes(fastify: FastifyInstance) {
                     description: "Mensagem enviada com sucesso",
                     type: "object",
                     properties: {
-                        id:        { type: "string" },
-                        sessionId: { type: "string" },
-                        content:   { type: "string" },
-                        senderId:  { type: "string" },
-                        createdAt: { type: "string", format: "date-time" },
+                        status: {type: "string"}
                     },
                 },
             },
@@ -55,12 +49,10 @@ async function messageRoutes(fastify: FastifyInstance) {
             },
             body: {
                 type: "object",
-                required: ["content", "senderId"],
+                required: ["content"],
                 properties: {
-                    sessionId: { type: "string" },
                     content:   { type: "string" },
-                    senderId:  { type: "string" },
-                    createdAt: { type: "string", format: "date-time" },
+                    creationDurationMs: {type: "number"}
                 },
             },
             response: {
@@ -68,11 +60,7 @@ async function messageRoutes(fastify: FastifyInstance) {
                     description: "Mensagem registrada e repassada ao cliente",
                     type: "object",
                     properties: {
-                        id:        { type: "string" },
-                        sessionId: { type: "string" },
-                        content:   { type: "string" },
-                        senderId:  { type: "string" },
-                        createdAt: { type: "string", format: "date-time" },
+                        status: {type: "string"}
                     },
                 },
             },

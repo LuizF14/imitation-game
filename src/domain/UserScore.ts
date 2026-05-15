@@ -7,7 +7,8 @@ export class UserScore {
     }
 
     static calculateChatSessionScore = (turingScore: number, truth: HumanOrAIEnum) => {
-        const confidence = truth == HumanOrAIEnum.HUMAN ? turingScore : (1 - turingScore);
-        return confidence * 100;
+        const confidence = truth === HumanOrAIEnum.HUMAN ? turingScore : (1 - turingScore);
+        const finalScore = Math.round(confidence * 100);
+        return finalScore;
     }
 }

@@ -18,7 +18,7 @@ async function userRoutes(fastify: FastifyInstance) {
           properties: {
             username: { type: "string" },
             email: { type: "string", format: "email" },
-            password: { type: "string", minLength: 6 },
+            password: { type: "string" },
           },
           examples: [
             {

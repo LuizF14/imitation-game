@@ -64,7 +64,7 @@ export class UserController {
         if (!refreshToken) {
             throw new ValidationError("Refresh token missing");
         }
-
+        
         let decoded: any;
 
         try {
@@ -110,8 +110,8 @@ export class UserController {
 
         await RefreshTokenRepository.delete(decoded.jti);
 
-        return reply.send({
-            status: "Logged out"
+        return reply.status(200).send({
+            message: "Logged out"
         });
     };
 

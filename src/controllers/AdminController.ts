@@ -118,9 +118,7 @@ export class AdminController {
     getAll = async (request: FastifyRequest, reply: FastifyReply) => {
         const admins = await AdminRepository.getAll();
 
-        return reply.status(200).send({
-            admins: admins
-        });
+        return reply.status(200).send(admins);
     }
 
     deleteAdmin = async (request: FastifyRequest<{Params: {id: string}}>, reply: FastifyReply) => {
