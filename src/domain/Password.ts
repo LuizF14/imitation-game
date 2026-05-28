@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { ValidationError } from "../errors/errors.js";
+import { BadRequestError, ValidationError } from "../errors/errors.js";
 
 export class Password {
     private _hash! : string;
@@ -10,7 +10,7 @@ export class Password {
 
     static async createFromPlainText(plain : string) : Promise<Password> {
         if (plain.length <= 6) {
-            throw new ValidationError("Password too short");
+            throw new BadRequestError("Password too short");
         }
 
         const hash = await bcrypt.hash(plain, 10);
@@ -21,7 +21,7 @@ export class Password {
         const isValidFormat = /^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/.test(hash);
 
         if (!isValidFormat) {
-            throw new ValidationError("Invalid password hash format");
+            throw new BadRequestError("Invalid password hash format");
         }
 
         return new Password(hash);

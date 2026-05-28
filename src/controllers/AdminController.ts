@@ -8,6 +8,14 @@ import { Text } from '../domain/Text.js';
 import { JWT } from '../domain/JWT.js';
 import { RefreshTokenRepository } from '../repositories/volatile/RefreshTokenRepository.js';
 
+const REFRESH_COOKIE_OPTIONS = {
+    path: '/',
+    httpOnly: true, // Impede acesso via JavaScript (Proteção XSS)
+    secure: process.env.NODE_ENV === 'production', // Só envia por HTTPS em produção
+    sameSite: 'lax' as const, // Proteção CSRF básica
+    maxAge: 7 * 24 * 60 * 60 * 1000
+};
+
 export class AdminController {
     register = async (request: FastifyRequest<{Body: Admin}>, reply: FastifyReply) => {
         const data = request.body;
@@ -28,7 +36,7 @@ export class AdminController {
         );
 
         return reply.status(201).send({
-            message: "User succesfully created"
+            id: admin.id
         });
     }
 
@@ -51,11 +59,13 @@ export class AdminController {
 
         await RefreshTokenRepository.create(jti, admin.id);
 
-        return reply.status(200).send({
-            id: admin.id,
-            access_token: accessToken,
-            refresh_token: refreshToken
-        });  
+        return reply
+            .status(200)
+            .setCookie('refresh_token', refreshToken, REFRESH_COOKIE_OPTIONS)
+            .send({
+                id: admin.id,
+                access_token: accessToken
+            });  
     }
 
     logout = async (request: FastifyRequest<{Body: {refresh_token: string}}>, reply: FastifyReply) => {
@@ -69,9 +79,14 @@ export class AdminController {
 
         await RefreshTokenRepository.delete(decoded.jti);
 
-        return reply.send({
-            message: "Logged out"
-        });
+        return reply
+            .status(200)
+            .clearCookie("refresh_token", {
+                path: "/"
+            })
+            .send({
+                message: "Logged out"
+            });
     }
 
     refresh = async (request: FastifyRequest<{Body: {refresh_token: string}}>, reply: FastifyReply) => {
@@ -109,10 +124,16 @@ export class AdminController {
             role: 'admin'
         });
 
-        return reply.status(200).send({
-            access_token: newAccessToken,
-            refresh_token: newRefreshToken
-        });
+        return reply
+            .status(200)
+            .setCookie(
+                "refresh_token",
+                newRefreshToken,
+                REFRESH_COOKIE_OPTIONS
+            )
+            .send({
+                access_token: newAccessToken
+            });
     }
 
     getAll = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -132,7 +153,12 @@ export class AdminController {
 
         await RefreshTokenRepository.deleteAllFromUser(id);
 
-        return reply.status(200).send({
+        return reply
+            .status(200)
+            .clearCookie("refresh_token", {
+                path: "/"
+            })
+            .send({
             message: "Admin deleted successfully"
         });
     }

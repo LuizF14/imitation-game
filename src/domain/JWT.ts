@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { UnauthorizedError } from "../errors/errors.js";
+import { AppError } from "../errors/errors.js";
 
 const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET!;
 const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET!;
@@ -27,8 +27,8 @@ export class JWT {
         try {
             return jwt.verify(token, ACCESS_SECRET);
         } catch (err: any) {
-            if (err instanceof jwt.TokenExpiredError) throw new UnauthorizedError("Access token expired");
-            throw new UnauthorizedError("Invalid access token");
+            if (err instanceof jwt.TokenExpiredError) throw new AppError("Access token expired");
+            throw new AppError("Invalid access token");
         }
     }
 
@@ -36,8 +36,8 @@ export class JWT {
         try {
             return jwt.verify(token, REFRESH_SECRET);
         } catch (err: any) {
-            if (err instanceof jwt.TokenExpiredError) throw new UnauthorizedError("Refresh token expired");
-            throw new UnauthorizedError("Invalid refresh token");
+            if (err instanceof jwt.TokenExpiredError) throw new AppError("Refresh token expired");
+            throw new AppError("Invalid refresh token");
         }
     }
 }

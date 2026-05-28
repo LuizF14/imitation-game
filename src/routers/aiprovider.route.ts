@@ -35,9 +35,8 @@ async function aiproviderRoutes(fastify: FastifyInstance) {
             description: "Provider created successfully",
             type: "object",
             properties: {
-              message: { type: "string" },
-            },
-            examples: [{ message: "Provider succesfully created" }],
+              id: { type: "string" },
+            }
           },
         },
       },

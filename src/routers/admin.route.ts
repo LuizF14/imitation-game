@@ -35,9 +35,8 @@ async function adminRoutes(fastify: FastifyInstance) {
             description: "Admin created successfully",
             type: "object",
             properties: {
-              message: { type: "string" },
+              id: { type: "string" },
             },
-            examples: [{ message: "User succesfully created" }],
           },
           401: { description: "Unauthorized" },
           403: { description: "Forbidden" },

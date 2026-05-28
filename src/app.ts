@@ -1,5 +1,6 @@
 import Fastify from "fastify";
 import fastifyWebsocket from "@fastify/websocket";
+import fastifyCookie from '@fastify/cookie';
 
 import userRoutes from "./routers/user.route.js";
 import { AppError } from "./errors/errors.js";
@@ -14,7 +15,7 @@ import messageRoutes from "./routers/message.route.js";
 import playerJudgmentRoutes from "./routers/playerjudgment.route.js";
 
 export async function buildApp() {
-    const app = Fastify({ logger: false });
+    const app = Fastify({ logger: true });
 
     app.register(fastifyWebsocket);
 
@@ -44,6 +45,10 @@ export async function buildApp() {
 
     await app.register(import("@fastify/swagger-ui"), {
         routePrefix: "/docs"
+    });
+
+    app.register(fastifyCookie, {
+        secret: "açslkdfjçalsdkjf",
     });
 
     app.register(userRoutes);

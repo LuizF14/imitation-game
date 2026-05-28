@@ -9,6 +9,14 @@ import { Url } from '../domain/Url.js';
 import { JWT } from '../domain/JWT.js';
 import { RefreshTokenRepository } from '../repositories/volatile/RefreshTokenRepository.js';
 
+const REFRESH_COOKIE_OPTIONS = {
+    path: '/',
+    httpOnly: true, // Impede acesso via JavaScript (Proteção XSS)
+    secure: process.env.NODE_ENV === 'production', // Só envia por HTTPS em produção
+    sameSite: 'lax' as const, // Proteção CSRF básica
+    maxAge: 7 * 24 * 60 * 60 * 1000
+};
+
 export class AIProviderController {
     signup = async (request: FastifyRequest<{Body: AIProvider}>, reply: FastifyReply) => {
         const data = request.body;
@@ -31,7 +39,7 @@ export class AIProviderController {
         );
 
         return reply.status(201).send({
-            message: "Provider succesfully created"
+            id: provider.id
         });
     };
 
@@ -54,11 +62,13 @@ export class AIProviderController {
 
         await RefreshTokenRepository.create(jti, provider.id);
 
-        return reply.status(200).send({
-            id: provider.id,
-            access_token: accessToken,
-            refresh_token: refreshToken
-        });  
+        return reply
+            .status(200)
+            .setCookie('refresh_token', refreshToken, REFRESH_COOKIE_OPTIONS)
+            .send({
+                id: provider.id,
+                access_token: accessToken
+            });  
     };
 
     refresh = async (request: FastifyRequest<{Body: {refresh_token: string}}>, reply: FastifyReply) => {
@@ -96,10 +106,12 @@ export class AIProviderController {
             role: 'provider'
         });
 
-        return reply.send({
-            access_token: newAccessToken,
-            refresh_token: newRefreshToken
-        });
+        return reply
+            .status(200)
+            .setCookie('refresh_token', refreshToken, REFRESH_COOKIE_OPTIONS)
+            .send({
+                access_token: newAccessToken
+            });
     };
 
     logout = async (request: FastifyRequest<{Body: {refresh_token: string}}>, reply: FastifyReply) => {
@@ -114,9 +126,14 @@ export class AIProviderController {
 
         await RefreshTokenRepository.delete(decoded.jti);
 
-        return reply.send({
-            message: "Logged out"
-        });
+        return reply
+            .status(200)
+            .clearCookie("refresh_token", {
+                path: "/"
+            })
+            .send({
+                message: "Logged out"
+            });
     };
 
     getMe = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -192,9 +209,14 @@ export class AIProviderController {
 
         await RefreshTokenRepository.deleteAllFromUser(id);
 
-        return reply.status(200).send({
-            message: "Provider deleted successfully"
-        });
+        return reply
+            .status(200)
+            .clearCookie("refresh_token", {
+                path: "/"
+            })
+            .send({
+                message: "Provider deleted successfully"
+            });
     }   
 }
 

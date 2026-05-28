@@ -33,9 +33,9 @@ async function userRoutes(fastify: FastifyInstance) {
             description: "User created successfully",
             type: "object",
             properties: {
-              message: { type: "string" },
+              id: { type: "string" },
             },
-            examples: [{ message: "User succesfully created" }],
+            examples: [{ id: "User succesfully created" }],
           },
         },
       },

@@ -5,8 +5,16 @@ import type { User } from '../../generated/prisma/client.js';
 import { Password } from '../domain/Password.js';
 import { Email } from '../domain/Email.js';
 import { Text } from '../domain/Text.js';
-import { UnauthorizedError, ValidationError } from '../errors/errors.js';
+import { BadRequestError, UnauthorizedError, ValidationError } from '../errors/errors.js';
 import { JWT } from '../domain/JWT.js';
+
+const REFRESH_COOKIE_OPTIONS = {
+    path: '/',
+    httpOnly: true, // Impede acesso via JavaScript (Proteção XSS)
+    secure: process.env.NODE_ENV === 'production', // Só envia por HTTPS em produção
+    sameSite: 'lax' as const, // Proteção CSRF básica
+    maxAge: 7 * 24 * 60 * 60 * 1000
+};
 
 export class UserController {
     signup = async (request: FastifyRequest<{Body: User}>, reply: FastifyReply) => {
@@ -14,7 +22,7 @@ export class UserController {
 
         const existing = await UserRepository.findByEmail(data.email);
         if (existing) {
-            throw new ValidationError("Email already exists");
+            throw new BadRequestError("Email already exists");
         }
 
         const username = new Text(data.username, 40);
@@ -27,9 +35,11 @@ export class UserController {
             hashedPassword.hash
         );
 
-        return reply.status(201).send({
-            message: "User succesfully created"
-        });
+        return reply
+            .status(201)
+            .send({
+                id: user.id
+            });
     };
 
     login = async (request: FastifyRequest<{Body: User}>, reply: FastifyReply) => {
@@ -51,15 +61,17 @@ export class UserController {
 
         await RefreshTokenRepository.create(jti, user.id);
 
-        return reply.status(200).send({
-            id: user.id,
-            access_token: accessToken,
-            refresh_token: refreshToken
-        });  
+        return reply
+            .status(200)
+            .setCookie('refresh_token', refreshToken, REFRESH_COOKIE_OPTIONS)
+            .send({
+                id: user.id,
+                access_token: accessToken
+            });  
     };
 
-    refresh = async (request: FastifyRequest<{Body: {refresh_token: string}}>, reply: FastifyReply) => {
-        const refreshToken = request.body.refresh_token;
+    refresh = async (request: FastifyRequest, reply: FastifyReply) => {
+        const refreshToken = request.cookies.refresh_token;
 
         if (!refreshToken) {
             throw new ValidationError("Refresh token missing");
@@ -93,26 +105,42 @@ export class UserController {
             role: 'user'
         });
 
-        return reply.send({
-            access_token: newAccessToken,
-            refresh_token: newRefreshToken
-        });
+        return reply
+            .status(200)
+            .setCookie(
+                "refresh_token",
+                newRefreshToken,
+                REFRESH_COOKIE_OPTIONS
+            )
+            .send({
+                access_token: newAccessToken
+            });
     };
 
-    logout = async (request: FastifyRequest<{Body: {refresh_token: string}}>, reply: FastifyReply) => {
-        const { refresh_token } = request.body;
+    logout = async (request: FastifyRequest, reply: FastifyReply) => {
+        const refreshToken = request.cookies.refresh_token;
 
-        if (!refresh_token) {
+        if (!refreshToken) {
             throw new ValidationError("Refresh token missing");
         }
 
-        const decoded = JWT.verifyRefreshToken(refresh_token) as any;
+        let decoded : any;
+        try {
+            decoded = JWT.verifyRefreshToken(refreshToken) as any;
+        } catch {
+            throw new ValidationError("Invalid token");
+        }
 
         await RefreshTokenRepository.delete(decoded.jti);
 
-        return reply.status(200).send({
-            message: "Logged out"
-        });
+        return reply
+            .status(200)
+            .clearCookie("refresh_token", {
+                path: "/"
+            })
+            .send({
+                message: "Logged out"
+            });
     };
 
     getMe = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -122,10 +150,12 @@ export class UserController {
         const user = await UserRepository.findById(id);
         if (!user) throw new UnauthorizedError("You cannot see this user");
 
-        return reply.status(200).send({
-            username: user.username,
-            score: user.score
-        });
+        return reply
+            .status(200)
+            .send({
+                username: user.username,
+                score: user.score
+            });
     };
 
     updateMe = async (request: FastifyRequest<{Body: User}>, reply: FastifyReply) => {
@@ -149,9 +179,11 @@ export class UserController {
             throw new ValidationError("User not found");
         }
 
-        return reply.status(200).send({
-            username: updatedUser.username
-        });
+        return reply
+            .status(200)
+            .send({
+                username: updatedUser.username
+            });
     };
 
     deleteMe = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -166,9 +198,12 @@ export class UserController {
 
         await RefreshTokenRepository.deleteAllFromUser(id);
 
-        return reply.status(200).send({
-            message: "User deleted successfully"
-        });
+        return reply
+            .status(200)
+            .clearCookie("refresh_token", {path: "/"})
+            .send({
+                message: "User deleted successfully"
+            });
     }   
 }
 export const userController = new UserController()
