@@ -49,7 +49,7 @@ export class CategoryController {
         const updateData: any = {};
 
         if (data.name) updateData.name = new Text(data.name, 40).value;
-        if (data.basePrompt) updateData.basePrompt = new Text(data.basePrompt, 40).value;
+        if (data.basePrompt) updateData.basePrompt = new Text(data.basePrompt, 1024).value;
 
         const updatedCategory = await CategoryRepository.update(updateData, id);
 

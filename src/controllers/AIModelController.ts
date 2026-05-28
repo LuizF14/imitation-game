@@ -11,8 +11,9 @@ export class AIModelController {
     registerModel = async (request: FastifyRequest<{Body: AIModel}>, reply: FastifyReply) => {
         const providerId = request.decodedJWT?.id;
         if (!providerId) throw new UnauthorizedError("Token is invalid");
-        const provider = await AIProviderRepository.findById(providerId);
-        if (!provider) throw new ValidationError("This provider doesnt exist");
+        // o jwt já garante que provider existe!!!!!!
+        // const provider = await AIProviderRepository.findById(providerId);
+        // if (!provider) throw new ValidationError("This provider doesnt exist");
         
         const data = request.body;
         const name = new Text(data.name, 60);
@@ -21,7 +22,7 @@ export class AIModelController {
         
         const newModel = await AIModelRepository.create(
             name.value,
-            provider.id,
+            providerId,
             ApiKey.hashKey(apiKey.plainKey),
             pathUrl.value,
             data.type

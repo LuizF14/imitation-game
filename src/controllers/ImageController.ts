@@ -65,7 +65,7 @@ export class ImageController {
         const image = await ImageRepository.delete(imageId, ownerId);
 
         if (!image) {
-            throw new ValidationError("Model not found");
+            throw new ValidationError("Image not found");
         }
 
         return reply.status(200).send({

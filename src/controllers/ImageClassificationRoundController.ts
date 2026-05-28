@@ -22,9 +22,21 @@ export class ImageClassificationRoundController {
 
     end = async (request: FastifyRequest<{Body: {userAnswer: HumanOrAIEnum}}>, reply: FastifyReply) => {
         const result = await this.endHandlerRequest(request);
-
+        
         return reply.status(200).send({
             result: result
+        });
+    }
+    
+    next = async (request: FastifyRequest<{Body: {userAnswer: HumanOrAIEnum}}>, reply: FastifyReply) => {
+        const result = await this.endHandlerRequest(request);
+        const session = await this.startHandlerRequest(request);
+
+        return reply.status(200).send({
+            result: result,
+            imageURL: session.imageURL,
+            categoryName: session.categoryName,
+            startedAt: session.startedAt
         });
     }
 
@@ -81,16 +93,5 @@ export class ImageClassificationRoundController {
         return userAdditionalScore ? 'SUCCESS' : 'FAIL';
     } 
 
-    next = async (request: FastifyRequest<{Body: {userAnswer: HumanOrAIEnum}}>, reply: FastifyReply) => {
-        const result = await this.endHandlerRequest(request);
-        const session = await this.startHandlerRequest(request);
-
-        return reply.status(200).send({
-            result: result,
-            imageURL: session.imageURL,
-            categoryName: session.categoryName,
-            startedAt: session.startedAt
-        });
-    }
 }
 export const imageClassificationRoundController = new ImageClassificationRoundController()

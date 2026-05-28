@@ -67,7 +67,7 @@ export class ChatSessionController {
         const session = await ChatSessionRepository.findActiveByPlayer(playerId);
 
         if (!session) {
-            return new AppError("No active session");
+            throw new AppError("No active session");
         }
 
         const opponentId =

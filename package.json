@@ -7,7 +7,7 @@
     "dev": "tsx src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "test": "NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose --noStackTrace"
   },
   "keywords": [],
   "author": "",
@@ -36,11 +36,13 @@
     "@types/pg": "^8.20.0",
     "@types/supertest": "^7.2.0",
     "@types/validator": "^13.15.10",
+    "@types/ws": "^8.18.1",
     "jest": "^30.3.0",
     "prisma": "^7.7.0",
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.9",
     "tsx": "^4.21.0",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.2",
+    "ws": "^8.21.0"
   }
 }

@@ -14,7 +14,7 @@ import messageRoutes from "./routers/message.route.js";
 import playerJudgmentRoutes from "./routers/playerjudgment.route.js";
 
 export async function buildApp() {
-    const app = Fastify({ logger: true });
+    const app = Fastify({ logger: false });
 
     app.register(fastifyWebsocket);
 
