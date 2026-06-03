@@ -19,6 +19,12 @@ export class PlayerJudgmentRepository {
         };
 
         await Cache.addToList(judgmentKey, judgment);
+        return judgment;
+    }
+
+    static async getLastJudgment(sessionId: string, judgeId: string) {
+        const judgmentKey = `${this.CACHE_PREFIX}:${sessionId}:${this.CACHE_SUFIX}:${judgeId}`;
+        return Cache.getListLastMember(judgmentKey);
     }
 
     static async persist(sessionId: string, judgeId: string, tx?: TransactionClient) {
@@ -30,7 +36,6 @@ export class PlayerJudgmentRepository {
 
         const parsedJudgments = judgments.map(raw => {
             const m = typeof raw === "string" ? JSON.parse(raw) : raw;
-
             return {
                 turingRate: m.turingRate,
                 judgeId: m.judgeId,

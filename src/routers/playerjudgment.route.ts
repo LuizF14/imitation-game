@@ -14,11 +14,9 @@ async function playerJudgmentRoutes(fastify: FastifyInstance) {
             security: [{ bearerAuth: [] }],
             body: {
                 type: "object",
-                required: ["sessionId", "judgedPlayerId", "isHuman"],
+                required: ["turingRate"],
                 properties: {
-                    sessionId:       { type: "string", description: "ID da chat session" },
-                    judgedPlayerId:  { type: "string", description: "ID do jogador julgado" },
-                    isHuman:         { type: "boolean", description: "true se acredita ser humano, false se IA" },
+                    turingRate: { type: "number" },
                 },
             },
             response: {
@@ -26,12 +24,8 @@ async function playerJudgmentRoutes(fastify: FastifyInstance) {
                     description: "Julgamento registrado",
                     type: "object",
                     properties: {
-                        id:             { type: "string" },
                         sessionId:      { type: "string" },
-                        judgedPlayerId: { type: "string" },
-                        isHuman:        { type: "boolean" },
-                        correct:        { type: "boolean", description: "Se o julgamento foi correto" },
-                        createdAt:      { type: "string", format: "date-time" },
+                        turingRate:        { type: "number" }
                     },
                 },
                 409: {

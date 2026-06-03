@@ -30,6 +30,8 @@ async function chatsessionRoutes(fastify : FastifyInstance) {
                 type: "object",
                 properties: {
                     message: { type: "string" },
+                    sessionScore: { type: "number" },
+                    opponentType: { type: "string" }
                 },
                 },
             },

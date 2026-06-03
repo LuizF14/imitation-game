@@ -1,17 +1,17 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
-import type { WebSocket } from '@fastify/websocket';
 
 import axios from 'axios';
 
 import { ChatSessionRepository } from '../repositories/persistent/ChatSessionRepository.js';
 import { MatchQueueRepository } from '../repositories/volatile/MatchQueueRepository.js';
-import { AppError, UnauthorizedError } from '../errors/errors.js';
+import { AppError, NotFoundError, UnauthorizedError } from '../errors/errors.js';
 import { HumanOrAIEnum } from '../../generated/prisma/enums.js';
 import { matchmakingEventBus } from '../services/SocketMapStore.js';
 import { WebSocketsMap } from '../domain/WebSocketsMap.js';
 import { AIModelRepository } from '../repositories/persistent/AIModelRepository.js';
 import { UserScore } from '../domain/UserScore.js';
 import { UserRepository } from '../repositories/persistent/UserRepository.js';
+import { PlayerJudgmentRepository } from '../repositories/persistent/PlayerJudgmentRepository.js';
 
 export class ChatSessionController {
     start = async (connection : WebSocket, request : FastifyRequest) => { 
@@ -20,8 +20,12 @@ export class ChatSessionController {
     
         WebSocketsMap.set(playerId, connection);
 
-        // const decision = Math.random() < 0.5 ? HumanOrAIEnum.HUMAN : HumanOrAIEnum.AI;
-        const decision =  false ? HumanOrAIEnum.HUMAN : HumanOrAIEnum.AI;; // temporario
+        let decision;
+        if (process.env.NODE_ENV === 'dev' && process.env.OPPONTENT_TYPE !== 'RANDOM'){
+            decision = process.env.OPPONTENT_TYPE === "HUMAN" ? HumanOrAIEnum.HUMAN : HumanOrAIEnum.AI;
+        } else {
+            decision = Math.random() < 0.5 ? HumanOrAIEnum.HUMAN : HumanOrAIEnum.AI;
+        }
 
         if (decision === HumanOrAIEnum.HUMAN) {
             const {status, opponentId} = await MatchQueueRepository.enqueuePlayer(playerId);
@@ -38,9 +42,10 @@ export class ChatSessionController {
     
             await matchmakingEventBus.notifyMatchFound(playerId, opponentId, session.id);
         } else if (decision === HumanOrAIEnum.AI) {
-            const opponentModel = await AIModelRepository.findById("58d3448f-7ce4-42a0-a820-7ff7536663dc");
+            const opponentModel = await AIModelRepository.findRandom();
+            if (!opponentModel) throw new NotFoundError("No model was found");
 
-            const url = opponentModel.provider.baseURL + opponentModel.pathURL + "/newsession";
+            const url = opponentModel.baseURL + opponentModel.pathURL + "/newsession";
             const sessionId = crypto.randomUUID();
             const response = await axios.post(url, {sessionId: sessionId});
             
@@ -80,9 +85,12 @@ export class ChatSessionController {
             ? session.player2Type
             : session.player1Type;
 
-        // console.log(session.turingRate, opponentType);
-        // const userAdditionalScore = UserScore.calculateChatSessionScore(session.turingRate, opponentType);
-        // await UserRepository.updateScore(userAdditionalScore, playerId);
+        const judgement = await PlayerJudgmentRepository.getLastJudgment(session.id, playerId);
+
+        let userAdditionalScore = 0;
+        if(judgement && judgement.turingRate) userAdditionalScore = UserScore.calculateChatSessionScore(judgement.turingRate, opponentType);
+        
+        await UserRepository.updateScore(userAdditionalScore, playerId);
 
         await ChatSessionRepository.persistSession(session.id);
 
@@ -98,7 +106,9 @@ export class ChatSessionController {
         );
 
         return reply.send({
-            message: "ended"
+            message: "ended",
+            sessionScore: userAdditionalScore,
+            opponentType: opponentType
         });
     }
 

@@ -4,9 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dev": "tsx src/server.ts",
+    "dev": "NODE_ENV=dev tsx src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "NODE_ENV=prod  dist/server.js",
     "test": "NODE_ENV=test node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose --noStackTrace"
   },
   "keywords": [],

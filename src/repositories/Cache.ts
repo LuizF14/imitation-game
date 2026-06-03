@@ -41,4 +41,10 @@ export class Cache {
   static async getMembers(key: string) {
     return await redis.smembers(key);
   }
+
+  static async getListLastMember(key: string) {
+    const result = await redis.lrange(key, -1, -1);
+    if (!result || result.length === 0) return null;
+    return JSON.parse(result[0]);
+  }
 }

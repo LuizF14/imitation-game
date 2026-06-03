@@ -1,6 +1,6 @@
 import { prisma } from "../../lib/prisma.js";
 import { Cache } from "../Cache.js";
-import { AIModelType } from "../../../generated/prisma/client.js";
+import type { AIModelType, AIModel } from "../../../generated/prisma/client.js";
 
 export class AIModelRepository {
     private static CACHE_PREFIX = "aimodel";
@@ -140,5 +140,20 @@ export class AIModelRepository {
 
         if (results) await Cache.set(cacheKey, results);
         return results;
+    }
+
+    static async findRandom() {
+        const [randomItem] = await prisma.$queryRaw<(AIModel & { providerName: string, baseURL: string })[]>`
+            SELECT 
+                m.*, 
+                p.name AS "providerName",
+                p."baseURL" AS "baseURL" -- 💡 Adicionadas aspas duplas em p."baseURL"
+            FROM "AIModel" m
+            JOIN "AIProvider" p ON m."providerId" = p.id
+            WHERE m."deletedAt" IS NULL
+            ORDER BY RANDOM() 
+            LIMIT 1
+        `;
+        return randomItem;
     }
 }

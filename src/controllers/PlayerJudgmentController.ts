@@ -19,7 +19,14 @@ export class PlayerJudgmentController {
             ? session.player2Id
             : session.player1Id;
         
-        await PlayerJudgmentRepository.addJudgment(data.turingRate, playerId, session.id, opponentId);
+        const judgment = await PlayerJudgmentRepository.addJudgment(data.turingRate, playerId, session.id, opponentId);
+
+        return reply
+            .status(200)
+            .send({
+                sessionId: session.id,
+                turingRate: judgment.turingRate
+            });
     }
 }
 export const playerJudgmentController = new PlayerJudgmentController()
