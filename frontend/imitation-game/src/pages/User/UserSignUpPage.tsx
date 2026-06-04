@@ -1,28 +1,20 @@
-import {Container, Paper} from "@mui/material";
-import { LoginForm } from "../../components/LoginForm";
-
 import { ThemeProvider } from "@emotion/react";
 import { userTheme } from "../../theme/userTheme";
 import { Navbar } from "../../components/Navbar";
-import { useNavigate } from "react-router-dom";
+import { Container, Paper } from "@mui/material";
+import { SignUpForm } from "../../components/SignUpForm";
 
-export function UserLoginPage() {
-    const navigate = useNavigate();
-
-    async function handleLogin(
+export function UserSignUpPage() {
+    async function handleSignUp(
+        name: string,
         email: string,
-        password: string,
-        rememberMe: boolean
+        password: string
     ) {
         console.log({
+            name,
             email,
-            password,
-            rememberMe
+            password
         });
-    }
-
-    async function handleNavigateToRegister() {
-        navigate("/user/signup");
     }
 
     return (
@@ -36,9 +28,8 @@ export function UserLoginPage() {
                         p: 4
                     }}
                 >
-                    <LoginForm
-                        onSubmit={handleLogin}
-                        onNavigateToRegister={handleNavigateToRegister}
+                    <SignUpForm
+                        onSubmit={handleSignUp}
                         role="USER"
                     />
                 </Paper>

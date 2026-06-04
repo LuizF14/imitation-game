@@ -1,8 +1,9 @@
 import {Container, Paper} from "@mui/material";
-import { LoginForm } from "../../components/LoginForm/LoginForm";
+import { LoginForm } from "../../components/LoginForm";
 
 import { ThemeProvider } from "@emotion/react";
 import { mainTheme } from "../../theme/mainTheme";
+import { Navbar } from "../../components/Navbar";
 
 export function AdminLoginPage() {
     async function handleLogin(
@@ -19,6 +20,7 @@ export function AdminLoginPage() {
 
     return (
         <ThemeProvider theme={mainTheme}>
+            <Navbar></Navbar>
             <Container maxWidth="sm">
                 <Paper elevation={3}
                     sx={{
@@ -29,6 +31,7 @@ export function AdminLoginPage() {
                     <LoginForm
                         onSubmit={handleLogin}
                         role="ADMIN"
+                        showSignUp={false}
                     />
                 </Paper>
             </Container>

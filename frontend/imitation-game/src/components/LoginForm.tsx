@@ -2,12 +2,12 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useState } from "react";
 
-import {Alert, Box, Button, Checkbox, FormControlLabel, IconButton, InputAdornment, TextField, Typography} from "@mui/material";
+import {Alert, Box, Button, Checkbox, FormControlLabel, IconButton, InputAdornment, Link, TextField, Typography} from "@mui/material";
 
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import * as yup from 'yup';
-import type { Roles } from '../../constants/rolesEnum';
+import type { Roles } from '../constants/rolesEnum';
 
 type LoginFormProps = {
     onSubmit: (
@@ -16,6 +16,8 @@ type LoginFormProps = {
         rememberMe: boolean
     ) => Promise<void> | void;
     loading?: boolean;
+    onNavigateToRegister?: () => void;
+    showSignUp?: boolean;
     error?: string;
     role: Roles;
 };
@@ -27,11 +29,11 @@ interface ILogin {
 }
 
 
-export function LoginForm({onSubmit, loading = false, error, role}: LoginFormProps) {
+export function LoginForm({onSubmit, onNavigateToRegister, showSignUp = true, loading = false, error, role}: LoginFormProps) {
     const {t} = useTranslation();
     const schema = yup.object({
-        email: yup.string().email(t("auth.login.invalidEmail")).required(t("auth.login.requiredEmail")),
-        password: yup.string().min(6, t("auth.login.shortPassword")).required(t("auth.login.requiredPassword")),
+        email: yup.string().email(t("auth.invalidEmail")).required(t("auth.requiredEmail")),
+        password: yup.string().min(6, t("auth.shortPassword")).required(t("auth.requiredPassword")),
         rememberMe: yup.boolean().required()
     });
     const [showPassword, setShowPassword] = useState(false);
@@ -62,10 +64,10 @@ export function LoginForm({onSubmit, loading = false, error, role}: LoginFormPro
         }}>
             <Typography variant="h4" component="h2">{t(`auth.login.title.${role}`)}</Typography>
 
-            <TextField label={t("auth.login.email")} fullWidth 
+            <TextField label={t("auth.email")} fullWidth 
                 error={!!errors.email} helperText={errors.email?.message} {...register("email")}/>
 
-            <TextField label={t("auth.login.password")} type={showPassword ? "text" : "password"} fullWidth
+            <TextField label={t("auth.password")} type={showPassword ? "text" : "password"} fullWidth
                 error={!!errors.password} helperText={errors.password?.message} {...register("password")}
                 slotProps={{
                     input: {
@@ -99,6 +101,42 @@ export function LoginForm({onSubmit, loading = false, error, role}: LoginFormPro
             <Button type="submit" variant="contained" disabled={loading} size="large">
                 {loading ? t("auth.login.loading") : t("auth.login.submit")}
             </Button>
+
+            {!showSignUp && (
+                <Typography variant="body2" align="center" 
+                    sx={{ 
+                        mt: 1, 
+                        color: "text.secondary",
+                        fontWeight: 300 // Mantendo o peso leve que você escolheu para o corpo
+                    }}>
+                    {t("auth.login.askAnotherAdmin")}
+                </Typography>
+            )}
+
+            {showSignUp && (
+
+                <Typography variant="body2" align="center" 
+                    sx={{ 
+                        mt: 1, 
+                        color: "text.secondary",
+                        fontWeight: 300 // Mantendo o peso leve que você escolheu para o corpo
+                    }}
+                >
+                    {t("auth.login.dontHaveAccount")}{" "}
+                    <Link component="button" type="button" variant="body2" onClick={onNavigateToRegister}
+                        sx={{
+                            color: "primary.main",
+                            fontWeight: 500,
+                            textDecoration: "none",
+                            "&:hover": {
+                                textDecoration: "underline",
+                            },
+                        }}
+                    >
+                        {t("auth.login.signUpHere")}
+                    </Link>
+                </Typography>
+            )}
         </Box>
     );
 }

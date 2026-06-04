@@ -46,6 +46,10 @@ export const baseTheme: ThemeOptions = {
       fontFamily: '"Ibarra Real Nova", "Lora", serif', 
       fontWeight: 500,
     },
+    h5: { 
+      fontFamily: '"Ibarra Real Nova", "Lora", serif', 
+      fontWeight: 500,
+    },
     
     // Elementos de interface continuam sans-serif, mas limpos
     button: { 

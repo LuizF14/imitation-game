@@ -1,20 +1,37 @@
 {
     "auth": {
+        "name": "Name",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "invalidEmail": "Invalid email!",
+        "shortPassword": "This password is too short",
+        "requiredEmail": "Email is required",
+        "requiredPassword": "Password is required",
+        "loading": "Loading",
+        "shortName": "This name is too short",
+        "requiredName": "Name is required",
+        "requiredBaseURL": "Base URL is required",
+        "invalidURL": "Invalid URL",
         "login": {
             "title": {
                 "AIPROVIDER": "Login as AI Provider",
                 "USER": "Login as User",
                 "ADMIN": "Login as Admnistrator"
             },
-            "email": "Email",
-            "password": "Password",
             "rememberMe": "Keep me signed in",
             "submit": "Login",
-            "loading": "Loading",
-            "invalidEmail": "Invalid email!",
-            "shortPassword": "This password is too short",
-            "requiredEmail": "Email is required",
-            "requiredPassword": "Password is required"
+            "dontHaveAccount": "If you don't have an account, try to ",
+            "signUpHere": "sign up here",
+            "askAnotherAdmin": "If you don't have an account, ask another admin to sign you up"
+        },
+        "signup": {
+            "title": {
+                "USER": "Sign Up as User",
+                "AIPROVIDER": "Sign Up as AI Provider"
+            },
+            "submit": "Sign Up",
+            "passwordsMustMatch": "Passwords must match"
         }
     }
 }

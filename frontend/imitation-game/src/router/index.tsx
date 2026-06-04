@@ -4,6 +4,8 @@ import { UserLoginPage } from "../pages/User/UserLoginPage";
 import { APP_ROUTES } from "../constants/appRoutes";
 import { AIProviderLoginPage } from "../pages/AIProvider/AIProviderLoginPage";
 import { AdminLoginPage } from "../pages/Admin/AdminLoginPage";
+import { UserSignUpPage } from "../pages/User/UserSignUpPage";
+import { AIProviderSignUpPage } from "../pages/AIProvider/AIProviderSignUpPage";
 
 export const router = createBrowserRouter([
     {
@@ -17,5 +19,13 @@ export const router = createBrowserRouter([
     {
         path: APP_ROUTES.ADMIN_LOGIN,
         element: <AdminLoginPage />
+    },
+    {
+        path: APP_ROUTES.USER_SIGNUP,
+        element: <UserSignUpPage />
+    }, 
+    {
+        path: APP_ROUTES.AIPROVIDER_SIGNUP,
+        element: <AIProviderSignUpPage />
     }
 ]);
