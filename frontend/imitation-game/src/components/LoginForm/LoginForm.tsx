@@ -1,10 +1,12 @@
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useState } from "react";
-import type { FormEvent } from "react";
 
-import {Alert, Box, Button, Checkbox, FormControlLabel, 
-        IconButton, InputAdornment, TextField, Typography} from "@mui/material";
+import {Alert, Box, Button, Checkbox, FormControlLabel, IconButton, InputAdornment, TextField, Typography} from "@mui/material";
 
 import {Visibility, VisibilityOff} from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
+import * as yup from 'yup';
 
 type LoginFormProps = {
     onSubmit: (
@@ -16,37 +18,59 @@ type LoginFormProps = {
     error?: string;
 };
 
+interface ILogin {
+    email: string;
+    password: string;
+    rememberMe: boolean;
+}
+
+
 export function LoginForm({onSubmit, loading = false, error}: LoginFormProps) {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [rememberMe, setRememberMe] = useState(false);
+    const {t} = useTranslation();
+    const schema = yup.object({
+        email: yup.string().email(t("auth.login.invalidEmail")).required(t("auth.login.requiredEmail")),
+        password: yup.string().min(6, t("auth.login.shortPassword")).required(t("auth.login.requiredPassword")),
+        rememberMe: yup.boolean().required()
+    });
     const [showPassword, setShowPassword] = useState(false);
 
-    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        await onSubmit(email, password, rememberMe);
-    }
+    const {register, handleSubmit, control, formState: { errors }} = useForm<ILogin>({
+        resolver: yupResolver(schema),
+        defaultValues: {
+            email: "",
+            password: "",
+            rememberMe: false
+        }
+    });
+
+    const submitForm = async (data: ILogin) => {
+        await onSubmit(
+            data.email,
+            data.password,
+            data.rememberMe
+        );
+    };
 
     return (
-        <Box component="form" onSubmit={handleSubmit} sx={{
+        <Box component="form" onSubmit={handleSubmit(submitForm)} sx={{
             display: 'flex',
             flexDirection: 'column',
             gap: 2,
             width: '100%'
         }}>
-            <Typography variant="h5" component="h2">Entrar</Typography>
+            <Typography variant="h5" component="h2">{t("auth.login.title")}</Typography>
 
-            <TextField label="Email" type="email" value={email}
-                onChange={(event) => setEmail(event.target.value)} required fullWidth/>
+            <TextField label={t("auth.login.email")} fullWidth 
+                error={!!errors.email} helperText={errors.email?.message} {...register("email")}/>
 
-            <TextField label="Senha" type={showPassword ? "text" : "password"} value={password} 
-                onChange={(event) => setPassword(event.target.value)} required fullWidth
+            <TextField label={t("auth.login.password")} type={showPassword ? "text" : "password"} fullWidth
+                error={!!errors.password} helperText={errors.password?.message} {...register("password")}
                 slotProps={{
                     input: {
                         endAdornment: (
                             <InputAdornment position="end">
-                                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                                    {showPassword ? (<VisibilityOff />) : (<Visibility />)}
+                                <IconButton onClick={() => setShowPassword(!showPassword)}>
+                                    {showPassword ? <VisibilityOff /> : <Visibility />}
                                 </IconButton>
                             </InputAdornment>
                         )
@@ -54,10 +78,16 @@ export function LoginForm({onSubmit, loading = false, error}: LoginFormProps) {
                 }}
             />
 
-            <FormControlLabel control={
-                <Checkbox checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)}/>
-                }
-                label="Me deixe conectado"
+            <Controller name="rememberMe" control={control} defaultValue={false} 
+                render={({ field }) => (
+                    <FormControlLabel
+                        control={
+                            <Checkbox checked={field.value} 
+                                onChange={(event) => field.onChange(event.target.checked)}/>
+                        }
+                        label={t("auth.login.rememberMe")}
+                    />
+                )}
             />
 
             {error && (
@@ -65,7 +95,7 @@ export function LoginForm({onSubmit, loading = false, error}: LoginFormProps) {
             )}
 
             <Button type="submit" variant="contained" disabled={loading} size="large">
-                {loading ? "Entrando..." : "Entrar"}
+                {loading ? t("auth.login.loading") : t("auth.login.submit")}
             </Button>
         </Box>
     );

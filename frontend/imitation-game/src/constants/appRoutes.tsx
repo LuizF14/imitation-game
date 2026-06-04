@@ -1,3 +1,4 @@
 export const APP_ROUTES = {
-    LOGIN: "/login",
+    USER_LOGIN: "/user/login",
+    AIPROVIDER_LOGIN: "/aiprovider/login"
 } as const;

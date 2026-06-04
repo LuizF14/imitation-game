@@ -2,9 +2,9 @@ import {Container, Paper} from "@mui/material";
 import { LoginForm } from "../../components/LoginForm/LoginForm";
 
 import { ThemeProvider } from "@emotion/react";
-import { userTheme } from "../../theme/userTheme";
+import { aiProviderTheme } from "../../theme/aiProviderTheme";
 
-export function UserLoginPage() {
+export function AIProviderLoginPage() {
     async function handleLogin(
         email: string,
         password: string,
@@ -18,7 +18,7 @@ export function UserLoginPage() {
     }
 
     return (
-        <ThemeProvider theme={userTheme}>
+        <ThemeProvider theme={aiProviderTheme}>
             <Container maxWidth="sm">
                 <Paper
                     elevation={3}

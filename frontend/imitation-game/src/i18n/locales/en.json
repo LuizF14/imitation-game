@@ -1,0 +1,16 @@
+{
+    "auth": {
+        "login": {
+            "title": "Login",
+            "email": "Email",
+            "password": "Password",
+            "rememberMe": "Keep me signed in",
+            "submit": "Login",
+            "loading": "Loading",
+            "invalidEmail": "Invalid email!",
+            "shortPassword": "This password is too short",
+            "requiredEmail": "Email is required",
+            "requiredPassword": "Password is required"
+        }
+    }
+}
