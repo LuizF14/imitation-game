@@ -6,6 +6,7 @@ import { AIProviderLoginPage } from "../pages/AIProvider/AIProviderLoginPage";
 import { AdminLoginPage } from "../pages/Admin/AdminLoginPage";
 import { UserSignUpPage } from "../pages/User/UserSignUpPage";
 import { AIProviderSignUpPage } from "../pages/AIProvider/AIProviderSignUpPage";
+import { AdminRegisterPage } from "../pages/Admin/AdminRegisterPage";
 
 export const router = createBrowserRouter([
     {
@@ -27,5 +28,9 @@ export const router = createBrowserRouter([
     {
         path: APP_ROUTES.AIPROVIDER_SIGNUP,
         element: <AIProviderSignUpPage />
+    },
+    {
+        path: APP_ROUTES.ADMIN_REGISTER,
+        element: <AdminRegisterPage />
     }
 ]);

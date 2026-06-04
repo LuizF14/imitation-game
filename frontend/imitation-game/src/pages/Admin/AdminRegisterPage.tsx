@@ -1,10 +1,10 @@
 import { ThemeProvider } from "@emotion/react";
-import { aiProviderTheme } from "../../theme/aiProviderTheme";
 import { Navbar } from "../../components/Navbar";
 import { Container, Paper } from "@mui/material";
-import { AiProviderSignUpForm } from "../../components/AIProviderSignUpForm";
+import { mainTheme } from "../../theme/mainTheme";
+import { SignUpForm } from "../../components/SignUpForm";
 
-export function AIProviderSignUpPage() {
+export function AdminRegisterPage() {
     async function handleSignUp(
         name: string,
         email: string,
@@ -18,7 +18,7 @@ export function AIProviderSignUpPage() {
     }
 
     return (
-        <ThemeProvider theme={aiProviderTheme}>
+        <ThemeProvider theme={mainTheme}>
             <Navbar></Navbar>
             <Container maxWidth="sm">
                 <Paper
@@ -28,7 +28,7 @@ export function AIProviderSignUpPage() {
                         p: 4
                     }}
                 >
-                    <AiProviderSignUpForm onSubmit={handleSignUp} />
+                    <SignUpForm role="ADMIN" onSubmit={handleSignUp} />
                 </Paper>
             </Container>
         </ThemeProvider>

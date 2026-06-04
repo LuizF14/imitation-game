@@ -28,7 +28,8 @@
         "signup": {
             "title": {
                 "USER": "Sign Up as User",
-                "AIPROVIDER": "Sign Up as AI Provider"
+                "AIPROVIDER": "Sign Up as AI Provider",
+                "ADMIN": "Register Admin"
             },
             "submit": "Sign Up",
             "passwordsMustMatch": "Passwords must match"
