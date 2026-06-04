@@ -7,6 +7,7 @@ import {Alert, Box, Button, Checkbox, FormControlLabel, IconButton, InputAdornme
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import * as yup from 'yup';
+import type { Roles } from '../../constants/rolesEnum';
 
 type LoginFormProps = {
     onSubmit: (
@@ -16,6 +17,7 @@ type LoginFormProps = {
     ) => Promise<void> | void;
     loading?: boolean;
     error?: string;
+    role: Roles;
 };
 
 interface ILogin {
@@ -25,7 +27,7 @@ interface ILogin {
 }
 
 
-export function LoginForm({onSubmit, loading = false, error}: LoginFormProps) {
+export function LoginForm({onSubmit, loading = false, error, role}: LoginFormProps) {
     const {t} = useTranslation();
     const schema = yup.object({
         email: yup.string().email(t("auth.login.invalidEmail")).required(t("auth.login.requiredEmail")),
@@ -58,7 +60,7 @@ export function LoginForm({onSubmit, loading = false, error}: LoginFormProps) {
             gap: 2,
             width: '100%'
         }}>
-            <Typography variant="h5" component="h2">{t("auth.login.title")}</Typography>
+            <Typography variant="h4" component="h2">{t(`auth.login.title.${role}`)}</Typography>
 
             <TextField label={t("auth.login.email")} fullWidth 
                 error={!!errors.email} helperText={errors.email?.message} {...register("email")}/>

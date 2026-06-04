@@ -29,6 +29,7 @@ export function UserLoginPage() {
                 >
                     <LoginForm
                         onSubmit={handleLogin}
+                        role="USER"
                     />
                 </Paper>
             </Container>

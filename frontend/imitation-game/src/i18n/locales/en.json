@@ -1,7 +1,11 @@
 {
     "auth": {
         "login": {
-            "title": "Login",
+            "title": {
+                "AIPROVIDER": "Login as AI Provider",
+                "USER": "Login as User",
+                "ADMIN": "Login as Admnistrator"
+            },
             "email": "Email",
             "password": "Password",
             "rememberMe": "Keep me signed in",

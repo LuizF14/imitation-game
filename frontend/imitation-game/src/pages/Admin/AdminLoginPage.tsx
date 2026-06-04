@@ -2,9 +2,9 @@ import {Container, Paper} from "@mui/material";
 import { LoginForm } from "../../components/LoginForm/LoginForm";
 
 import { ThemeProvider } from "@emotion/react";
-import { aiProviderTheme } from "../../theme/aiProviderTheme";
+import { mainTheme } from "../../theme/mainTheme";
 
-export function AIProviderLoginPage() {
+export function AdminLoginPage() {
     async function handleLogin(
         email: string,
         password: string,
@@ -18,10 +18,9 @@ export function AIProviderLoginPage() {
     }
 
     return (
-        <ThemeProvider theme={aiProviderTheme}>
+        <ThemeProvider theme={mainTheme}>
             <Container maxWidth="sm">
-                <Paper
-                    elevation={3}
+                <Paper elevation={3}
                     sx={{
                         mt: 8,
                         p: 4
@@ -29,7 +28,7 @@ export function AIProviderLoginPage() {
                 >
                     <LoginForm
                         onSubmit={handleLogin}
-                        role="AIPROVIDER"
+                        role="ADMIN"
                     />
                 </Paper>
             </Container>
