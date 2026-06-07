@@ -7,6 +7,7 @@ import { AdminLoginPage } from "../pages/Admin/AdminLoginPage";
 import { UserSignUpPage } from "../pages/User/UserSignUpPage";
 import { AIProviderSignUpPage } from "../pages/AIProvider/AIProviderSignUpPage";
 import { AdminRegisterPage } from "../pages/Admin/AdminRegisterPage";
+import { LandingPage } from "../pages/landingpage";
 
 export const router = createBrowserRouter([
     {
@@ -32,5 +33,9 @@ export const router = createBrowserRouter([
     {
         path: APP_ROUTES.ADMIN_REGISTER,
         element: <AdminRegisterPage />
+    }, 
+    {
+        path: APP_ROUTES.LANDING_PAGE,
+        element: <LandingPage />
     }
 ]);

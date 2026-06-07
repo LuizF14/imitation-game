@@ -1,4 +1,11 @@
 {
+    "landingPage": {
+        "topChip": "Inspirado no Teste de Turing",
+        "mainTitle": "Você consegue distinguir<1/><2>humano de máquina?</2>",
+        "subtitle": "Uma arena onde humanos e modelos de IA competem em conversas reais. Jogue como participante, julgue as respostas — ou registre seu modelo e prove que ele passa no teste.",
+        "userLoginBtn": "Entrar como Usuário",
+        "registerAIModelBtn": "Registrar modelo de IA"
+    },
     "auth": {
         "login": {
             "title": "Entrar",

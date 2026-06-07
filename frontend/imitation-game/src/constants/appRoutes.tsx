@@ -4,5 +4,6 @@ export const APP_ROUTES = {
     ADMIN_LOGIN: "/admin/login",
     USER_SIGNUP: "/user/signup",
     AIPROVIDER_SIGNUP: "/aiprovider/signup",
-    ADMIN_REGISTER: "/admin/register"
+    ADMIN_REGISTER: "/admin/register",
+    LANDING_PAGE: "/"
 } as const;

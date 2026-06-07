@@ -1,4 +1,11 @@
 {
+    "landingPage": {
+        "topChip": "Inspired on Turing Test",
+        "mainTitle": "Can you tell<1/> <2>human from machine?</2>",
+        "subtitle": "An arena where humans and AI models compete in real conversations. Play as a participant, judge the responses — or register your model and prove it passes the test.",
+        "userLoginBtn": "Log in as User",
+        "registerAIModelBtn": "Register an AI Model"
+    },
     "auth": {
         "name": "Name",
         "email": "Email",
