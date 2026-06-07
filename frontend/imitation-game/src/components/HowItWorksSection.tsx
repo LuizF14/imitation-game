@@ -4,40 +4,54 @@ import ForumIcon from "@mui/icons-material/Forum";
 import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import TuneIcon from "@mui/icons-material/Tune";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import { useTranslation } from "react-i18next";
 
-const steps = [
-    {
-        icon: <PersonSearchIcon fontSize="small" />,
-        title: "Entre na fila",
-        description: "Solicite uma sessão. O sistema pareia você com um oponente — humano ou IA. Você não saberá qual.",
-    },
-    {
-        icon: <ForumIcon fontSize="small" />,
-        title: "Duelo começa",
-        description: "A conversa abre. Cinco minutos no relógio. Troque mensagens livremente — tente parecer humano.",
-    },
-    {
-        icon: <TuneIcon fontSize="small" />,
-        title: "Avalie com o Turing Rate",
-        description: "A qualquer momento, deslize o Turing Rate: 0 para robô, 1 para humano, 0.5 se não tiver certeza.",
-    },
-    {
-        icon: <HourglassBottomIcon fontSize="small" />,
-        title: "Tempo esgota",
-        description: "Com o fim dos cinco minutos, a sessão fecha. O último Turing Rate de cada humano é registrado.",
-    },
-    {
-        icon: <EmojiEventsIcon fontSize="small" />,
-        title: "Resultado",
-        description: "Os pontos são calculados. Enganou o oponente? Você ganhou. Foi identificado? Ele ganhou.",
-    },
+const icons = [
+    <PersonSearchIcon fontSize="small" />,
+    <ForumIcon fontSize="small" />,
+    <TuneIcon fontSize="small" />,
+    <HourglassBottomIcon fontSize="small" />,
+    <EmojiEventsIcon fontSize="small" />,
 ];
 
 export function HowItWorksSection() {
+    const {t} = useTranslation();
+    
+    const steps = (t("landingPage.howItWorks.steps", { returnObjects: true }) as {
+        title: string;
+        description: string;
+    }[]).map((step, i) => ({ ...step, icon: icons[i] }));
+
     return (
         <Box
             component="section"
-            sx={{ py: { xs: 10, md: 14 } }}
+            sx={{
+                py: { xs: 10, md: 14 },
+                backgroundColor: "background.paper",
+                position: "relative",
+                // Se a sombra está fora, precisamos garantir que o Box não esconda o que está fora dele
+                overflow: "visible", 
+                "&::before": {
+                    content: '""',
+                    position: "absolute",
+                    top: -80, // Mudou de 0 para -80 (joga para cima, fora da caixa)
+                    left: 0,
+                    right: 0,
+                    height: 80,
+                    background: "linear-gradient(to bottom, transparent, #0F1012)", // Inverti o degradê para casar com o fundo escuro de fora
+                    pointerEvents: "none",
+                },
+                "&::after": {
+                    content: '""',
+                    position: "absolute",
+                    bottom: -80, // Mudou de 0 para -80 (joga para baixo, fora da caixa)
+                    left: 0,
+                    right: 0,
+                    height: 80,
+                    background: "linear-gradient(to top, transparent, #0F1012)", // Inverti o degradê para casar com o fundo escuro de fora
+                    pointerEvents: "none",
+                },
+            }}
         >
             <Container maxWidth="lg">
 
@@ -53,7 +67,7 @@ export function HowItWorksSection() {
                             mb: 1.5,
                         }}
                     >
-                        Como funciona
+                        {t("landingPage.howItWorks.suptitle")}
                     </Typography>
                     <Typography
                         variant="h2"
@@ -62,7 +76,7 @@ export function HowItWorksSection() {
                             color: "text.primary",
                         }}
                     >
-                        Uma rodada em cinco passos
+                        {t("landingPage.howItWorks.title")}
                     </Typography>
                 </Box>
 
