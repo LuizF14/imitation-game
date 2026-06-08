@@ -8,6 +8,8 @@ import { UserSignUpPage } from "../pages/User/UserSignUpPage";
 import { AIProviderSignUpPage } from "../pages/AIProvider/AIProviderSignUpPage";
 import { AdminRegisterPage } from "../pages/Admin/AdminRegisterPage";
 import { LandingPage } from "../pages/landingpage";
+import { UserHomePage } from "../pages/User/UserHomePage";
+import { ProtectedRoute } from "../components/ProtectedRoutes";
 
 export const router = createBrowserRouter([
     {
@@ -37,5 +39,13 @@ export const router = createBrowserRouter([
     {
         path: APP_ROUTES.LANDING_PAGE,
         element: <LandingPage />
+    },
+    {
+        path: APP_ROUTES.USER_HOME_PAGE,
+        element: (
+            <ProtectedRoute requiredRole="USER">
+                <UserHomePage />
+            </ProtectedRoute>
+        )
     }
 ]);
