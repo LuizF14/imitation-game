@@ -10,6 +10,7 @@ import { AdminRegisterPage } from "../pages/Admin/AdminRegisterPage";
 import { LandingPage } from "../pages/landingpage";
 import { UserHomePage } from "../pages/User/UserHomePage";
 import { ProtectedRoute } from "../components/ProtectedRoutes";
+import { AIProviderHomePage } from "../pages/AIProvider/AIProviderHomePage";
 
 export const router = createBrowserRouter([
     {
@@ -45,6 +46,14 @@ export const router = createBrowserRouter([
         element: (
             <ProtectedRoute requiredRole="USER">
                 <UserHomePage />
+            </ProtectedRoute>
+        )
+    },
+    {
+        path: APP_ROUTES.AIPROVIDER_HOME_PAGE,
+        element: (
+            <ProtectedRoute requiredRole="AIPROVIDER">
+                <AIProviderHomePage />
             </ProtectedRoute>
         )
     }
