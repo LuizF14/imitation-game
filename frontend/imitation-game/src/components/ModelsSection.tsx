@@ -4,6 +4,8 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import SmartToyOutlinedIcon from "@mui/icons-material/SmartToyOutlined";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { RegisterModelModal } from "./RegisterModelModal";
 
 export interface AIModel {
     id: string;
@@ -20,6 +22,7 @@ interface Props {
 
 export function ModelsSection({ models }: Props) {
     const navigate = useNavigate();
+    const [modalOpen, setModalOpen] = useState(false);
 
     return (
         <Box component="section" sx={{ py: { xs: 4, md: 6 } }}>
@@ -53,7 +56,7 @@ export function ModelsSection({ models }: Props) {
                         variant="contained"
                         size="small"
                         startIcon={<AddOutlinedIcon />}
-                        onClick={() => navigate("/aiprovider/models/new")}
+                        onClick={() => setModalOpen(true)}
                         sx={{
                             bgcolor: "primary.main",
                             color: "primary.contrastText",
@@ -191,6 +194,11 @@ export function ModelsSection({ models }: Props) {
                     </Grid>
                 )}
             </Container>
+
+            <RegisterModelModal
+                open={modalOpen}
+                onClose={() => setModalOpen(false)}
+            />
         </Box>
     );
 }
