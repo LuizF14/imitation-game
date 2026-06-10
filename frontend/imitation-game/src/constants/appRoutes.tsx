@@ -7,5 +7,6 @@ export const APP_ROUTES = {
     ADMIN_REGISTER: "/admin/register",
     LANDING_PAGE: "/",
     USER_HOME_PAGE: "/user/home",
-    AIPROVIDER_HOME_PAGE: "/aiprovider/home"
+    AIPROVIDER_HOME_PAGE: "/aiprovider/home",
+    CHAT_SESSION: "/chatsession"
 } as const;

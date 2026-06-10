@@ -11,6 +11,7 @@ import { LandingPage } from "../pages/landingpage";
 import { UserHomePage } from "../pages/User/UserHomePage";
 import { ProtectedRoute } from "../components/ProtectedRoutes";
 import { AIProviderHomePage } from "../pages/AIProvider/AIProviderHomePage";
+import { ChatSessionPage } from "../pages/User/ChatSessionPage";
 
 export const router = createBrowserRouter([
     {
@@ -54,6 +55,14 @@ export const router = createBrowserRouter([
         element: (
             <ProtectedRoute requiredRole="AIPROVIDER">
                 <AIProviderHomePage />
+            </ProtectedRoute>
+        )
+    },
+    {
+        path: APP_ROUTES.CHAT_SESSION, 
+        element: (
+            <ProtectedRoute requiredRole="USER">
+                <ChatSessionPage />
             </ProtectedRoute>
         )
     }

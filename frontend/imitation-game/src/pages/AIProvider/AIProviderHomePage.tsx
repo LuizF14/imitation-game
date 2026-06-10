@@ -16,6 +16,7 @@ const mockModels: AIModel[] = [
         score: 3240,
         ranking: 4,
         active: true,
+        type: "Chat"
     },
     {
         id: "m2",
@@ -24,6 +25,7 @@ const mockModels: AIModel[] = [
         score: 1190,
         ranking: 17,
         active: true,
+        type: "Chat"
     },
     {
         id: "m3",
@@ -32,6 +34,7 @@ const mockModels: AIModel[] = [
         score: 210,
         ranking: null,
         active: false,
+        type: "Image"
     },
 ];
 // --------------------------------------------------------

@@ -6,11 +6,14 @@ import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { RegisterModelModal } from "./RegisterModelModal";
+import ForumOutlinedIcon from "@mui/icons-material/ForumOutlined";
+import ImageSearchOutlinedIcon from "@mui/icons-material/ImageSearchOutlined";
 
 export interface AIModel {
     id: string;
     name: string;
     sessionsPlayed: number;
+    type: "Chat" | "Image";
     score: number;
     ranking: number | null;
     active: boolean;
@@ -99,16 +102,19 @@ export function ModelsSection({ models }: Props) {
                                     <CardContent sx={{ flex: 1, p: 3 }}>
 
                                         {/* Nome + status */}
-                                        <Stack
-                                            direction="row"
-                                            sx={{alignItems: "center", justifyContent: "space-between", mb: 2.5}}
-                                        >
-                                            <Typography
-                                                variant="h5"
-                                                sx={{ fontSize: "1rem", color: "text.primary" }}
-                                            >
-                                                {model.name}
-                                            </Typography>
+                                        <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between", mb: 2.5 }}>
+                                            <Stack direction="row" sx={{alignItems: "center"}} spacing={1}>
+                                                {/* ícone de tipo */}
+                                                <Box sx={{ color: "text.disabled" }}>
+                                                    {model.type === "Chat"
+                                                        ? <ForumOutlinedIcon sx={{ fontSize: 16 }} />
+                                                        : <ImageSearchOutlinedIcon sx={{ fontSize: 16 }} />
+                                                    }
+                                                </Box>
+                                                <Typography variant="h5" sx={{ fontSize: "1rem", color: "text.primary" }}>
+                                                    {model.name}
+                                                </Typography>
+                                            </Stack>
                                             <Chip
                                                 label={model.active ? "Active" : "Inactive"}
                                                 size="small"
