@@ -1,21 +1,14 @@
 import {Container, Paper} from "@mui/material";
-import { LoginForm } from "../../../../src/components/LoginForm";
+import { LoginForm } from "../../auth/components/LoginForm";
 
 import { ThemeProvider } from "@emotion/react";
 import { mainTheme } from "../../../app/themes/mainTheme";
-import { Navbar } from "../../../../src/components/Navbar";
+import { Navbar } from "../../../shared/components/Navbar";
+import type { LoginFormData } from "../../auth/types/Login";
 
 export function AdminLoginPage() {
-    async function handleLogin(
-        email: string,
-        password: string,
-        rememberMe: boolean
-    ) {
-        console.log({
-            email,
-            password,
-            rememberMe
-        });
+    async function handleLogin(data: LoginFormData) {
+        console.log(data);
     }
 
     return (
@@ -28,11 +21,7 @@ export function AdminLoginPage() {
                         p: 4
                     }}
                 >
-                    <LoginForm
-                        onSubmit={handleLogin}
-                        role="ADMIN"
-                        showSignUp={false}
-                    />
+                    <LoginForm onSubmit={handleLogin} role="ADMIN" showSignUp={false} />
                 </Paper>
             </Container>
         </ThemeProvider>

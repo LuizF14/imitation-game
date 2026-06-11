@@ -1,28 +1,22 @@
 import {Container, Paper} from "@mui/material";
-import { LoginForm } from "../../components/LoginForm";
+import { LoginForm } from "../../auth/components/LoginForm";
 import { useNavigate } from "react-router-dom";
 
 import { ThemeProvider } from "@emotion/react";
-import { aiProviderTheme } from "../../theme/aiProviderTheme";
-import { Navbar } from "../../components/Navbar";
+import { aiProviderTheme } from "../../../app/themes/aiProviderTheme";
+import { Navbar } from "../../../shared/components/Navbar";
+import type { LoginFormData } from "../../auth/types/Login";
+import { APP_ROUTES } from "../../../app/router/appRoutes";
 
 export function AIProviderLoginPage() {
     const navigate = useNavigate();
 
-    async function handleLogin(
-        email: string,
-        password: string,
-        rememberMe: boolean
-    ) {
-        console.log({
-            email,
-            password,
-            rememberMe
-        });
+    async function handleLogin(data: LoginFormData) {
+        console.log(data);
     }
 
     function handleNavigationToRegister() {
-        navigate("/aiprovider/signup");
+        navigate(APP_ROUTES.AIPROVIDER_SIGNUP);
     }
 
     return (

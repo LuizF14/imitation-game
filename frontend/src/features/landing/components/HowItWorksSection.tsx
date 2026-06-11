@@ -7,7 +7,7 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import { Box, Container, Stack, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-import { howItWorksStyles } from "./HowItWorksSection.styles";
+import { howItWorksStyles } from "../styles/HowItWorksSection.styles";
 
 const icons = [
     <PersonSearchIcon fontSize="small" />,

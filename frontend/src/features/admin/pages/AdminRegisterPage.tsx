@@ -1,20 +1,13 @@
 import { ThemeProvider } from "@emotion/react";
-import { Navbar } from "../../../../src/components/Navbar";
+import { Navbar } from "../../../shared/components/Navbar";
 import { Container, Paper } from "@mui/material";
 import { mainTheme } from "../../../app/themes/mainTheme";
-import { SignUpForm } from "../../components/SignUpForm";
+import { AdminRegisterForm } from "../../auth/components/AdminRegisterForm";
+import type { AdminSignUpData } from "../../auth/types/AdminSignUpData";
 
 export function AdminRegisterPage() {
-    async function handleSignUp(
-        name: string,
-        email: string,
-        password: string
-    ) {
-        console.log({
-            name,
-            email,
-            password
-        });
+    async function handleSignUp(data: AdminSignUpData) {
+        console.log(data);
     }
 
     return (
@@ -28,7 +21,7 @@ export function AdminRegisterPage() {
                         p: 4
                     }}
                 >
-                    <SignUpForm role="ADMIN" onSubmit={handleSignUp} />
+                    <AdminRegisterForm onSubmit={handleSignUp} />
                 </Paper>
             </Container>
         </ThemeProvider>

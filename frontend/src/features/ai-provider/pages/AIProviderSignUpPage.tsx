@@ -1,20 +1,13 @@
 import { ThemeProvider } from "@emotion/react";
-import { aiProviderTheme } from "../../theme/aiProviderTheme";
-import { Navbar } from "../../components/Navbar";
+import { aiProviderTheme } from "../../../app/themes/aiProviderTheme";
+import { Navbar } from "../../../shared/components/Navbar";
 import { Container, Paper } from "@mui/material";
-import { AiProviderSignUpForm } from "../../components/AIProviderSignUpForm";
+import { AIProviderSignUpForm } from "../../auth/components/AIProviderSignUpForm";
+import type { AIProviderSignUpData } from "../../auth/types/AIProviderSignUpData";
 
 export function AIProviderSignUpPage() {
-    async function handleSignUp(
-        name: string,
-        email: string,
-        password: string
-    ) {
-        console.log({
-            name,
-            email,
-            password
-        });
+    async function handleSignUp(data: AIProviderSignUpData) {
+        console.log(data);
     }
 
     return (
@@ -28,7 +21,7 @@ export function AIProviderSignUpPage() {
                         p: 4
                     }}
                 >
-                    <AiProviderSignUpForm onSubmit={handleSignUp} />
+                    <AIProviderSignUpForm onSubmit={handleSignUp} />
                 </Paper>
             </Container>
         </ThemeProvider>

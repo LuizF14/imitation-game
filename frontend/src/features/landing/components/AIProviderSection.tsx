@@ -10,7 +10,7 @@ import {Box, Button, Container, Grid, Stack, Typography} from "@mui/material";
 
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { aiProviderSectionStyles } from "./AIProviderSection.styles";
+import { aiProviderSectionStyles } from "../styles/AIProviderSection.styles";
 import { APP_ROUTES } from "../../../app/router/appRoutes";
 
 const stepIcons = [

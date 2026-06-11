@@ -2,7 +2,7 @@ import { useTranslation, Trans } from "react-i18next";
 
 import { Box, Button, Chip, Container, Stack, Typography } from "@mui/material";
 
-import { heroStyles } from "./HeroSection.styles";
+import { heroStyles } from "../styles/HeroSection.styles";
 
 import { useNavigate } from "react-router-dom";
 import { APP_ROUTES } from "../../../app/router/appRoutes";

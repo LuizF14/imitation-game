@@ -4,6 +4,10 @@ import { APP_ROUTES } from "./appRoutes";
 import { LandingPage } from "../../features/landing/pages/LandingPage";
 import { UserLoginPage } from "../../features/user/pages/UserLoginPage";
 import { UserSignUpPage } from "../../features/user/pages/UserSignUpPage";
+import { AIProviderSignUpPage } from "../../features/ai-provider/pages/AIProviderSignUpPage";
+import { AIProviderLoginPage } from "../../features/ai-provider/pages/AIProviderLoginPage";
+import { AdminLoginPage } from "../../features/admin/pages/AdminLoginPage";
+import { AdminRegisterPage } from "../../features/admin/pages/AdminRegisterPage";
 // import { AIProviderLoginPage } from "../pages/AIProvider/AIProviderLoginPage";
 // import { AdminLoginPage } from "../../features/admin/pages/AdminLoginPage";
 // import { UserSignUpPage } from "../pages/User/UserSignUpPage";
@@ -24,26 +28,26 @@ export const router = createBrowserRouter([
         path: APP_ROUTES.USER_LOGIN,
         element: <UserLoginPage />
     },
-    // {
-    //     path: APP_ROUTES.AIPROVIDER_LOGIN,
-    //     element: <AIProviderLoginPage />
-    // },
-    // {
-    //     path: APP_ROUTES.ADMIN_LOGIN,
-    //     element: <AdminLoginPage />
-    // },
+    {
+        path: APP_ROUTES.AIPROVIDER_LOGIN,
+        element: <AIProviderLoginPage />
+    },
+    {
+        path: APP_ROUTES.ADMIN_LOGIN,
+        element: <AdminLoginPage />
+    },
     {
         path: APP_ROUTES.USER_SIGNUP,
         element: <UserSignUpPage />
     }, 
-    // {
-    //     path: APP_ROUTES.AIPROVIDER_SIGNUP,
-    //     element: <AIProviderSignUpPage />
-    // },
-    // {
-    //     path: APP_ROUTES.ADMIN_REGISTER,
-    //     element: <AdminRegisterPage />
-    // }, 
+    {
+        path: APP_ROUTES.AIPROVIDER_SIGNUP,
+        element: <AIProviderSignUpPage />
+    },
+    {
+        path: APP_ROUTES.ADMIN_REGISTER,
+        element: <AdminRegisterPage />
+    }, 
     // {
     //     path: APP_ROUTES.USER_HOME_PAGE,
     //     element: (

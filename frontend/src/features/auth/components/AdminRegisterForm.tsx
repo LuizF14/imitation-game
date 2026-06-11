@@ -1,24 +1,24 @@
 import { useTranslation } from "react-i18next";
 import { PasswordField } from "./PasswordField";
 import { Alert, Box, Button, TextField, Typography } from "@mui/material";
-import { createUserSignUpSchema } from "../schemas/userSignUpSchema";
-import type { UserSignUpData } from "../types/UserSignUpData";
+import { createAdminSignUpSchema } from "../schemas/adminSignUpSchema";
+import type { AdminSignUpData } from "../types/AdminSignUpData";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMemo } from "react";
 import { signUpFormStyles } from "../styles/SignUpForm.styles";
 
-type UserSignUpFormProps = {
-    onSubmit: (data: UserSignUpData) => Promise<void> | void;
+type AIProviderFormProps = {
+    onSubmit: (data: AdminSignUpData) => Promise<void> | void;
     loading?: boolean;
     error?: string;
 }
 
-export function UserSignUpForm({onSubmit, loading = false, error}: UserSignUpFormProps) {
+export function AdminRegisterForm({onSubmit, loading = false, error}: AIProviderFormProps) {
     const { t } = useTranslation();
-    const schema = useMemo(() => createUserSignUpSchema(t), [t]);
+    const schema = useMemo(() => createAdminSignUpSchema(t), [t]);
 
-    const {register, handleSubmit, formState: { errors } } = useForm<UserSignUpData>({
+    const {register, handleSubmit, formState: { errors } } = useForm<AdminSignUpData>({
         resolver: yupResolver(schema),
         defaultValues: {
             name: "",
@@ -30,7 +30,7 @@ export function UserSignUpForm({onSubmit, loading = false, error}: UserSignUpFor
 
     return (
         <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={signUpFormStyles.form}>
-            <Typography variant="h4" component="h2">{t(`auth.signup.title.USER`)}</Typography>
+            <Typography variant="h4" component="h2">{t(`auth.signup.title.ADMIN`)}</Typography>
 
             <TextField label={t("auth.name")} fullWidth error={!!errors.name} helperText={errors.name?.message} {...register("name")} />
             <TextField label={t("auth.email")} fullWidth error={!!errors.email} helperText={errors.email?.message} {...register("email")} />

@@ -6,7 +6,7 @@ import { Alert, Box, Button, Checkbox, FormControlLabel, Link, TextField, Typogr
 import { useTranslation } from "react-i18next";
 
 import type { Roles } from '../../../app/constants/rolesEnum';
-import { loginFormStyles } from './LoginForm.styles';
+import { loginFormStyles } from '../styles/LoginForm.styles';
 import type { LoginFormData } from '../types/Login';
 import { PasswordField } from './PasswordField';
 import { useMemo } from 'react';
