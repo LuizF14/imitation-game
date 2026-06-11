@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["ES2023", "DOM"],
+    "module": "esnext",
+    "types": ["vite/client"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src", "src/features/user/pages/UserHomePage.tsx", "src/features/admin/pages/AdminLoginPage.tsx", "src/features/admin/pages/AdminRegisterPage.tsx", "src/features/landing/pages/LandingPage.tsx", "src/features/ai-provider/components/RegisterModelModal.tsx", "src/features/user/components/UserStatsSection.tsx", "src/shared/components/ProtectedRoutes.tsx", "src/features/landing/components/HowItWorksSection.tsx", "src/features/landing/components/HeroSection.tsx", "src/features/landing/components/AIProviderSection.tsx", "src/features/ai-provider/components/ModelsSection.tsx", "src/features/user/components/GameModeSection.tsx", "src/features/user/components/ActiveSessionBanner.tsx", "src/app/router", "src/app/i18n", "src/app/themes", "src/app/constants"]
+}
