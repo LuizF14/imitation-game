@@ -1,20 +1,10 @@
-import {
-    Box,
-    Divider,
-    Drawer,
-    IconButton,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    InputBase,
-    Typography,
+import {  Box,  Divider,  Drawer,  IconButton,  List,  ListItem,  ListItemButton,  ListItemIcon,  ListItemText,  InputBase,  Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export interface SidebarLink {
     key: string;
@@ -33,6 +23,7 @@ const DEFAULT_WIDTH = 240;
 function SidebarContent({ links, drawerWidth }: Required<Props>) {
     const navigate = useNavigate();
     const location = useLocation();
+    const {t} = useTranslation();
 
     return (
         <Box
@@ -95,7 +86,7 @@ function SidebarContent({ links, drawerWidth }: Required<Props>) {
                                     {link.icon}
                                 </ListItemIcon>
                                 <ListItemText
-                                    primary={link.label}
+                                    primary={t(link.label)}
                                     slotProps={{
                                         primary: {
                                             sx: {

@@ -8,5 +8,11 @@ export const APP_ROUTES = {
     LANDING_PAGE: "/",
     USER_HOME_PAGE: "/user/home",
     AIPROVIDER_HOME_PAGE: "/aiprovider/home",
-    CHAT_SESSION: "/chatsession"
+    CHAT_SESSION: "/chatsession",
+    IMAGE_SESSION: "/imagesession",
+
+    USER_LEADERBOARD: "/user/leaderboard", 
+    USER_PROFILE: "/user/profile",
+    USER_HISTORY: "/user/history",
+    USER_SETTINGS: "/user/settings"
 } as const;

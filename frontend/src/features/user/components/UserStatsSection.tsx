@@ -1,11 +1,9 @@
 import { Box, Container, Grid, Stack, Typography } from "@mui/material";
 import TrendingUpOutlinedIcon from "@mui/icons-material/TrendingUpOutlined";
-
-interface StatCard {
-    label: string;
-    value: string | number;
-    sub?: string;
-}
+import { userStatsStyles } from "../styles/UserStatsSection.styles";
+import { UserStatCard } from "./UserStatCard";
+import type { UserStatCardProps } from "./UserStatCard";
+import { useTranslation } from "react-i18next";
 
 interface Props {
     stats: {
@@ -16,26 +14,31 @@ interface Props {
     };
 }
 
-export function UserStatsSection({ stats }: Props) {
-    const cards: StatCard[] = [
+function buildStatsCards(stats: Props["stats"]): UserStatCardProps[] { 
+    return [
         {
-            label: "Sessions played",
+            label: "user.statsSection.sessionsPlayed",
             value: stats.sessionsPlayed,
         },
         {
-            label: "Win rate",
+            label: "user.statsSection.winRate",
             value: `${stats.winRate.toFixed(1)}%`,
         },
         {
-            label: "Avg Turing Rate received",
+            label: "user.statsSection.avgTuringRate",
             value: stats.avgTuringRate.toFixed(2),
-            sub: "0 = robot · 1 = human",
+            subtitle: "user.statsSection.turingRateSubtitle",
         },
         {
-            label: "Global ranking",
+            label: "user.statsSection.globalRanking",
             value: stats.ranking !== null ? `#${stats.ranking}` : "—",
         },
-    ];
+    ]
+}
+
+export function UserStatsSection({ stats }: Props) {
+    const {t} = useTranslation();
+    const cards = buildStatsCards(stats);
 
     return (
         <Box component="section" sx={{ py: { xs: 1, md: 3 } }}>
@@ -43,62 +46,15 @@ export function UserStatsSection({ stats }: Props) {
 
                 <Stack direction="row" spacing={1} sx={{ mb: 3, alignItems: "center" }}>
                     <TrendingUpOutlinedIcon sx={{ fontSize: 18, color: "primary.main" }} />
-                    <Typography
-                        variant="overline"
-                        sx={{
-                            color: "primary.main",
-                            letterSpacing: "0.1em",
-                            fontSize: "0.72rem",
-                        }}
-                    >
+                    <Typography variant="overline" sx={userStatsStyles.title} >
                         Your stats
                     </Typography>
                 </Stack>
 
                 <Grid container spacing={2}>
                     {cards.map((card) => (
-                        <Grid size={{xs: 6, md: 3}} key={card.label}>
-                            <Box
-                                sx={{
-                                    p: 2.5,
-                                    bgcolor: "background.paper",
-                                    border: "0.5px solid",
-                                    borderColor: "divider",
-                                    borderRadius: 2,
-                                    height: "100%",
-                                }}
-                            >
-                                <Typography
-                                    variant="caption"
-                                    sx={{
-                                        color: "text.secondary",
-                                        fontSize: "0.75rem",
-                                        display: "block",
-                                        mb: 1,
-                                    }}
-                                >
-                                    {card.label}
-                                </Typography>
-                                <Typography
-                                    variant="h4"
-                                    sx={{
-                                        fontSize: { xs: "1.4rem", md: "1.8rem" },
-                                        color: "text.primary",
-                                        lineHeight: 1,
-                                        mb: card.sub ? 0.75 : 0,
-                                    }}
-                                >
-                                    {card.value}
-                                </Typography>
-                                {card.sub && (
-                                    <Typography
-                                        variant="caption"
-                                        sx={{ color: "text.disabled", fontSize: "0.7rem" }}
-                                    >
-                                        {card.sub}
-                                    </Typography>
-                                )}
-                            </Box>
+                        <Grid size={{ xs: 6, md: 3 }} key={t(card.label)} >
+                            <UserStatCard {...card} />
                         </Grid>
                     ))}
                 </Grid>

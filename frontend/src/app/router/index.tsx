@@ -8,6 +8,8 @@ import { AIProviderSignUpPage } from "../../features/ai-provider/pages/AIProvide
 import { AIProviderLoginPage } from "../../features/ai-provider/pages/AIProviderLoginPage";
 import { AdminLoginPage } from "../../features/admin/pages/AdminLoginPage";
 import { AdminRegisterPage } from "../../features/admin/pages/AdminRegisterPage";
+import { ProtectedRoute } from "../../features/auth/components/ProtectedRoutes";
+import { UserHomePage } from "../../features/user/pages/UserHomePage";
 // import { AIProviderLoginPage } from "../pages/AIProvider/AIProviderLoginPage";
 // import { AdminLoginPage } from "../../features/admin/pages/AdminLoginPage";
 // import { UserSignUpPage } from "../pages/User/UserSignUpPage";
@@ -48,14 +50,14 @@ export const router = createBrowserRouter([
         path: APP_ROUTES.ADMIN_REGISTER,
         element: <AdminRegisterPage />
     }, 
-    // {
-    //     path: APP_ROUTES.USER_HOME_PAGE,
-    //     element: (
-    //         <ProtectedRoute requiredRole="USER">
-    //             <UserHomePage />
-    //         </ProtectedRoute>
-    //     )
-    // },
+    {
+        path: APP_ROUTES.USER_HOME_PAGE,
+        element: (
+            <ProtectedRoute requiredRole="USER">
+                <UserHomePage />
+            </ProtectedRoute>
+        )
+    },
     // {
     //     path: APP_ROUTES.AIPROVIDER_HOME_PAGE,
     //     element: (

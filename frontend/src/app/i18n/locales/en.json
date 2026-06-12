@@ -108,5 +108,42 @@
             "submit": "Sign Up",
             "passwordsMustMatch": "Passwords must match"
         }
+    },
+
+    "user": {
+        "sidebar": {
+            "play": "Play", 
+            "leaderboard": "Leaderboard",
+            "history": "Match History",
+            "profile": "Profile",
+            "settings": "Settings"
+        },
+        "statsSection": {
+            "sessionsPlayed": "Sessions played", 
+            "winRate": "Win rate",
+            "avgTuringRate": "Avg Turing Rate received",
+            "globalRanking": "Global ranking",
+            "turingRateSubtitle": "0 = robot · 1 = human"
+        },
+        "activeSessionBanner": {
+            "resumeSession": "Resume Session"
+        },
+        "gamemodeSection": {
+            "title": "Play",
+            "startSession": "Start Session",
+            "moreModesComing": "More modes coming soon"
+        },
+        "gamemodes": {
+            "chat": {
+                "label": "Chat Duel",
+                "description": "1v1 conversation against an unknown opponent.",
+                "detail": "Exchange messages for 5 minutes. Rate your opponent with the Turing Rate. Human or machine — you decide."
+            },
+            "image": {
+                "label": "Image Classification",
+                "description": "Can you tell AI-generated from human-made?",
+                "detail": "Analyze images and classify them as AI-generated or human-created. Test your eye against the machine."
+            }
+        }
     }
 }
