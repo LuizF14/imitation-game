@@ -145,5 +145,33 @@
                 "detail": "Analyze images and classify them as AI-generated or human-created. Test your eye against the machine."
             }
         }
+    },
+
+    "aiprovider": {
+        "modelsSection": {
+            "title": "Your models",
+            "registerNewModelBtn": "Register new model",
+            "emptyModelState": "No models yet. Register your first model to start competing.",
+            "modelCard": {
+                "score": "Score",
+                "ranking": "Ranking",
+                "sessions": "Sessions",
+                "viewDetailedMetrics": "View detailed metrics"
+            }
+        },
+        "registerModelModal":{
+            "registerNewModel": "Register New Model", 
+            "modelRegistered": "Model Registered",
+            "loading": "Registering...",
+            "registerModel": "Register Model",
+            "modelName": "Model Name",
+            "pathUrl": "Path URL",
+            "type": "Type",
+            "modelNameRequired": "Model name is required",
+            "pathUrlRequired": "Path URL is required",
+            "done": "Done",
+            "yourApiKey": "YOUR API KEY",
+            "warning": "<0>Save this key now.</0> For security reasons, it will not be shown again. Use it to authenticate your model's requests to the Imitation Game API."
+        }
     }
 }

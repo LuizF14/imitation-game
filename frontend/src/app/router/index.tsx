@@ -10,6 +10,7 @@ import { AdminLoginPage } from "../../features/admin/pages/AdminLoginPage";
 import { AdminRegisterPage } from "../../features/admin/pages/AdminRegisterPage";
 import { ProtectedRoute } from "../../features/auth/components/ProtectedRoutes";
 import { UserHomePage } from "../../features/user/pages/UserHomePage";
+import { AIProviderHomePage } from "../../features/ai-provider/pages/AIProviderHomePage";
 // import { AIProviderLoginPage } from "../pages/AIProvider/AIProviderLoginPage";
 // import { AdminLoginPage } from "../../features/admin/pages/AdminLoginPage";
 // import { UserSignUpPage } from "../pages/User/UserSignUpPage";
@@ -58,14 +59,14 @@ export const router = createBrowserRouter([
             </ProtectedRoute>
         )
     },
-    // {
-    //     path: APP_ROUTES.AIPROVIDER_HOME_PAGE,
-    //     element: (
-    //         <ProtectedRoute requiredRole="AIPROVIDER">
-    //             <AIProviderHomePage />
-    //         </ProtectedRoute>
-    //     )
-    // },
+    {
+        path: APP_ROUTES.AIPROVIDER_HOME_PAGE,
+        element: (
+            <ProtectedRoute requiredRole="AIPROVIDER">
+                <AIProviderHomePage />
+            </ProtectedRoute>
+        )
+    },
     // {
     //     path: APP_ROUTES.CHAT_SESSION, 
     //     element: (

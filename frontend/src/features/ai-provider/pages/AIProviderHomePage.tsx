@@ -1,11 +1,11 @@
 import { ThemeProvider } from "@mui/material/styles";
 import { Box, CssBaseline } from "@mui/material";
-import { aiProviderTheme } from "../../theme/aiProviderTheme";
-import { Navbar } from "../../components/Navbar";
-import { Sidebar } from "../../components/Sidebar";
 import { aiProviderSidebarLinks } from "./aiProviderSidebarLinks";
-import { ModelsSection } from "../../components/ModelsSection";
-import type { AIModel } from "../../components/ModelsSection";
+import { ModelsSection, type AIModel } from "../components/ModelsSection";
+import { aiProviderTheme } from "../../../app/themes/aiProviderTheme";
+import { Navbar } from "../../../shared/components/Navbar";
+import { Sidebar } from "../../../shared/components/Sidebar";
+import { aiProviderHomePageStyles } from "../styles/AIProviderHomePage.styles";
 
 // --- Mock data (substituir por chamadas reais à API) ---
 const mockModels: AIModel[] = [
@@ -43,29 +43,11 @@ export function AIProviderHomePage() {
     return (
         <ThemeProvider theme={aiProviderTheme}>
             <CssBaseline />
-
-            {/* Topo */}
             <Navbar />
 
-            {/* Corpo: sidebar + conteúdo */}
-            <Box
-                sx={{
-                    display: "flex",
-                    height: "calc(100vh - 64px)",
-                    overflow: "hidden",
-                }}
-            >
+            <Box sx={aiProviderHomePageStyles.container} >
                 <Sidebar links={aiProviderSidebarLinks} />
-
-                {/* Conteúdo principal com scroll */}
-                <Box
-                    component="main"
-                    sx={{
-                        flex: 1,
-                        overflowY: "auto",
-                        pb: 8,
-                    }}
-                >
+                <Box component="main" sx={aiProviderHomePageStyles.mainContent} >
                     <ModelsSection models={mockModels} />
                 </Box>
             </Box>
