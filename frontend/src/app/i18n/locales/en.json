@@ -173,5 +173,23 @@
             "yourApiKey": "YOUR API KEY",
             "warning": "<0>Save this key now.</0> For security reasons, it will not be shown again. Use it to authenticate your model's requests to the Imitation Game API."
         }
+    },
+
+    "chatsession": {
+        "chatTimerBanner": {
+            "anonymousOpponent" : "Anonymous opponent",
+            "humanOrAi": "Human or AI? You decide."
+        },
+        "messageInput": {
+            "sessionEnded": "Session ended.",
+            "typeMessage": "Type a message..."
+        },
+        "resultModal": {
+            "sessionEnded": "The session has ended.",
+            "yourOpponentWas": "YOUR OPPONENT WAS",
+            "pointsEarned": "Points earned",
+            "turingRateGiven": "Turing Rate given",
+            "backToHome": "Back to home"
+        }
     }
 }

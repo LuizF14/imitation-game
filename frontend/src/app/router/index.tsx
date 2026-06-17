@@ -11,6 +11,7 @@ import { AdminRegisterPage } from "../../features/admin/pages/AdminRegisterPage"
 import { ProtectedRoute } from "../../features/auth/components/ProtectedRoutes";
 import { UserHomePage } from "../../features/user/pages/UserHomePage";
 import { AIProviderHomePage } from "../../features/ai-provider/pages/AIProviderHomePage";
+import { ChatSessionPage } from "../../features/chatsession/pages/ChatSessionPage";
 // import { AIProviderLoginPage } from "../pages/AIProvider/AIProviderLoginPage";
 // import { AdminLoginPage } from "../../features/admin/pages/AdminLoginPage";
 // import { UserSignUpPage } from "../pages/User/UserSignUpPage";
@@ -67,12 +68,12 @@ export const router = createBrowserRouter([
             </ProtectedRoute>
         )
     },
-    // {
-    //     path: APP_ROUTES.CHAT_SESSION, 
-    //     element: (
-    //         <ProtectedRoute requiredRole="USER">
-    //             <ChatSessionPage />
-    //         </ProtectedRoute>
-    //     )
-    // }
+    {
+        path: APP_ROUTES.CHAT_SESSION, 
+        element: (
+            <ProtectedRoute requiredRole="USER">
+                <ChatSessionPage />
+            </ProtectedRoute>
+        )
+    }
 ]);

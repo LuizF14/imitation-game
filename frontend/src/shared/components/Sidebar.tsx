@@ -5,13 +5,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-
-export interface SidebarLink {
-    key: string;
-    label: string;
-    icon: React.ReactNode;
-    route: string;
-}
+import type { SidebarLink } from "../types/SidebarLinks";
 
 interface Props {
     links: SidebarLink[];

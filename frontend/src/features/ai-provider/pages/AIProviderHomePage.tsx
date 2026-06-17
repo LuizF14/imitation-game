@@ -1,11 +1,8 @@
-import { ThemeProvider } from "@mui/material/styles";
-import { Box, CssBaseline } from "@mui/material";
 import { aiProviderSidebarLinks } from "./aiProviderSidebarLinks";
-import { ModelsSection, type AIModel } from "../components/ModelsSection";
+import { ModelsSection } from "../components/ModelsSection";
 import { aiProviderTheme } from "../../../app/themes/aiProviderTheme";
-import { Navbar } from "../../../shared/components/Navbar";
-import { Sidebar } from "../../../shared/components/Sidebar";
-import { aiProviderHomePageStyles } from "../styles/AIProviderHomePage.styles";
+import { ShellLayout } from "../../../shared/layout/ShellLayout";
+import type { AIModel } from "../types/AIModel";
 
 // --- Mock data (substituir por chamadas reais à API) ---
 const mockModels: AIModel[] = [
@@ -41,16 +38,8 @@ const mockModels: AIModel[] = [
 
 export function AIProviderHomePage() {
     return (
-        <ThemeProvider theme={aiProviderTheme}>
-            <CssBaseline />
-            <Navbar />
-
-            <Box sx={aiProviderHomePageStyles.container} >
-                <Sidebar links={aiProviderSidebarLinks} />
-                <Box component="main" sx={aiProviderHomePageStyles.mainContent} >
-                    <ModelsSection models={mockModels} />
-                </Box>
-            </Box>
-        </ThemeProvider>
+        <ShellLayout theme={aiProviderTheme} sidebarLinks={aiProviderSidebarLinks}>
+            <ModelsSection models={mockModels} />
+        </ShellLayout>
     );
 }
