@@ -3,11 +3,12 @@ import ImageSearchOutlinedIcon from "@mui/icons-material/ImageSearchOutlined";
 import ArrowForwardOutlinedIcon from "@mui/icons-material/ArrowForwardOutlined";
 
 import { Box, Button, Card, CardContent, Chip, Divider, Grid, Stack, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { generatePath, useNavigate } from "react-router-dom";
 import type { AIModel } from "../types/AIModel";
 import { modelCardStyles } from "../styles/ModelCard.syles";
 import { modelsSectionStyles } from "../styles/ModelsSection.styles";
 import { useTranslation } from "react-i18next";
+import { APP_ROUTES } from "../../../app/router/appRoutes";
 
 interface ModelCardProps {
     model: AIModel;
@@ -16,6 +17,10 @@ interface ModelCardProps {
 export function ModelCard({model} : ModelCardProps) {
     const navigate = useNavigate();
     const {t} = useTranslation();
+
+    function handleDetailedModel() {
+        navigate(generatePath(APP_ROUTES.AIPROVIDER_MODEL_DETAILS, { id: String(model.id) }));
+    }
 
     return (
         <Grid size={{xs: 12, sm: 6, md: 4}} key={model.id}>
@@ -70,7 +75,7 @@ export function ModelCard({model} : ModelCardProps) {
                 </CardContent>
 
                 <Box sx={{ px: 3, pb: 3 }}>
-                    <Button variant="outlined" fullWidth endIcon={<ArrowForwardOutlinedIcon fontSize="small" />} onClick={() => navigate(`/aiprovider/models/${model.id}`)} sx={modelsSectionStyles.viewDetailedMetricsBtn} >
+                    <Button variant="outlined" fullWidth endIcon={<ArrowForwardOutlinedIcon fontSize="small" />} onClick={handleDetailedModel} sx={modelsSectionStyles.viewDetailedMetricsBtn} >
                         {t("aiprovider.modelsSection.modelCard.viewDetailedMetrics")}
                     </Button>
                 </Box>

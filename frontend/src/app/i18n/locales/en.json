@@ -109,15 +109,16 @@
             "passwordsMustMatch": "Passwords must match"
         }
     },
-
+    
+    "sidebar": {
+        "play": "Play", 
+        "leaderboard": "Leaderboard",
+        "history": "Match History",
+        "profile": "Profile",
+        "settings": "Settings",
+        "manage": "Manage"
+    },
     "user": {
-        "sidebar": {
-            "play": "Play", 
-            "leaderboard": "Leaderboard",
-            "history": "Match History",
-            "profile": "Profile",
-            "settings": "Settings"
-        },
         "statsSection": {
             "sessionsPlayed": "Sessions played", 
             "winRate": "Win rate",

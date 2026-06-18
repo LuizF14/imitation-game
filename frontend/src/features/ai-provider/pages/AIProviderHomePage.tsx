@@ -1,4 +1,4 @@
-import { aiProviderSidebarLinks } from "./aiProviderSidebarLinks";
+import { aiProviderSidebarLinks } from "../data/AIProviderSidebarLinks";
 import { ModelsSection } from "../components/ModelsSection";
 import { aiProviderTheme } from "../../../app/themes/aiProviderTheme";
 import { ShellLayout } from "../../../shared/layout/ShellLayout";
