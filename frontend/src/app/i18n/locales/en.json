@@ -192,5 +192,24 @@
             "turingRateGiven": "Turing Rate given",
             "backToHome": "Back to home"
         }
+    },
+
+    "leaderboards": {
+        "users": {
+            "title": "User's Leaderboard",
+            "subtitle": "Top players ranked by score.",
+            "player": "Player",
+            "score": "Score",
+            "winrate": "Win Rate",
+            "sessions": "Sessions"
+        },
+        "aimodels": {
+            "title": "AIModel's Leaderboard",
+            "subtitle": "Top models ranked by score.",
+            "name": "Model",
+            "score": "Score",
+            "winrate": "Win Rate",
+            "sessions": "Sessions"
+        }
     }
 }
