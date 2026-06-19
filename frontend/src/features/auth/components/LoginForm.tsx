@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { Alert, Box, Button, Checkbox, FormControlLabel, Link, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Link, TextField, Typography } from "@mui/material";
 
 import { useTranslation } from "react-i18next";
 
@@ -30,7 +30,6 @@ export function LoginForm({onSubmit, onNavigateToRegister, showSignUp = true, lo
         defaultValues: {
             email: "",
             password: "",
-            rememberMe: false,
         },
     });
 
@@ -48,14 +47,12 @@ export function LoginForm({onSubmit, onNavigateToRegister, showSignUp = true, lo
             <PasswordField label={t("auth.password")} fullWidth error={!!errors.password} 
                 helperText={errors.password?.message} {...register("password")} />
 
-            <FormControlLabel control={<Checkbox {...register("rememberMe")} />} label={t("auth.login.rememberMe")} />
-
             {error && (
                 <Alert severity="error">{error}</Alert>
             )}
 
             <Button type="submit" variant="contained" disabled={loading} size="large">
-                {loading ? t("auth.login.loading") : t("auth.login.submit")}
+                {loading ? t("auth.loading") : t("auth.login.submit")}
             </Button>
 
             {!showSignUp && (

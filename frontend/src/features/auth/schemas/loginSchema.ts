@@ -12,8 +12,4 @@ export const createLoginSchema = (t: TFunction) =>
             .string()
             .min(6, t("auth.shortPassword"))
             .required(t("auth.requiredPassword")),
-
-        rememberMe: yup
-            .boolean()
-            .required(),
     });
