@@ -1,115 +1,20 @@
-import {  Box,  Divider,  Drawer,  IconButton,  List,  ListItem,  ListItemButton,  ListItemIcon,  ListItemText,  InputBase,  Typography,
-} from "@mui/material";
+import {  Drawer,  IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import type { SidebarLink } from "../types/SidebarLinks";
 
-interface Props {
+import type { SidebarLink } from "../types/SidebarLinks";
+import { SidebarContent } from "./SidebarContent";
+import type { Profile } from "../types/Profile";
+
+interface SidebarProps {
     links: SidebarLink[];
     drawerWidth?: number;
+    profile: Profile;
 }
 
 const DEFAULT_WIDTH = 240;
 
-function SidebarContent({ links, drawerWidth }: Required<Props>) {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const {t} = useTranslation();
-
-    return (
-        <Box
-            sx={{
-                width: drawerWidth,
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                bgcolor: "background.paper",
-                borderRight: "0.5px solid",
-                borderColor: "divider",
-            }}
-        >
-            {/* Barra de pesquisa */}
-            <Box
-                sx={{
-                    px: 2,
-                    py: 1.5,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    borderBottom: "0.5px solid",
-                    borderColor: "divider",
-                }}
-            >
-                <SearchIcon sx={{ fontSize: 18, color: "text.disabled", flexShrink: 0 }} />
-                <InputBase
-                    placeholder="Search..."
-                    fullWidth
-                    sx={{
-                        fontSize: "0.85rem",
-                        color: "text.primary",
-                        "& input::placeholder": { color: "text.disabled" },
-                    }}
-                />
-            </Box>
-
-            {/* Links */}
-            <List sx={{ flex: 1, px: 1, py: 1.5 }} disablePadding>
-                {links.map((link) => {
-                    const active = location.pathname === link.route;
-                    return (
-                        <ListItem key={link.key} disablePadding sx={{ mb: 0.5 }}>
-                            <ListItemButton
-                                onClick={() => navigate(link.route)}
-                                sx={{
-                                    borderRadius: 1.5,
-                                    px: 1.5,
-                                    py: 1,
-                                    bgcolor: active ? "rgba(255,255,255,0.05)" : "transparent",
-                                    "&:hover": { bgcolor: "rgba(255,255,255,0.04)" },
-                                }}
-                            >
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 36,
-                                        color: active ? "primary.light" : "text.disabled",
-                                    }}
-                                >
-                                    {link.icon}
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary={t(link.label)}
-                                    slotProps={{
-                                        primary: {
-                                            sx: {
-                                                fontSize: "0.875rem",
-                                                fontWeight: active ? 500 : 400,
-                                                color: active ? "text.primary" : "text.secondary",
-                                            }
-                                        }
-                                    }}
-                                />
-                            </ListItemButton>
-                        </ListItem>
-                    );
-                })}
-            </List>
-
-            <Divider sx={{ borderColor: "divider" }} />
-
-            {/* Rodapé da sidebar */}
-            <Box sx={{ px: 2, py: 1.5 }}>
-                <Typography variant="caption" sx={{ color: "text.disabled", fontSize: "0.7rem" }}>
-                    Imitation Game
-                </Typography>
-            </Box>
-        </Box>
-    );
-}
-
-export function Sidebar({ links, drawerWidth = DEFAULT_WIDTH }: Props) {
+export function Sidebar({ links, drawerWidth = DEFAULT_WIDTH, profile }: SidebarProps) {
     const [mobileOpen, setMobileOpen] = useState(false);
 
     return (
@@ -149,7 +54,7 @@ export function Sidebar({ links, drawerWidth = DEFAULT_WIDTH }: Props) {
                     },
                 }}
             >
-                <SidebarContent links={links} drawerWidth={drawerWidth} />
+                <SidebarContent links={links} drawerWidth={drawerWidth} profile={profile}/>
             </Drawer>
 
             {/* Desktop — permanent drawer */}
@@ -171,7 +76,7 @@ export function Sidebar({ links, drawerWidth = DEFAULT_WIDTH }: Props) {
                     },
                 }}
             >
-                <SidebarContent links={links} drawerWidth={drawerWidth} />
+                <SidebarContent links={links} drawerWidth={drawerWidth} profile={profile}/>
             </Drawer>
         </>
     );

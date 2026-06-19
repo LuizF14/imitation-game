@@ -20,7 +20,6 @@ export function useAuth() {
 
     try {
         const payload = jwtDecode<JwtPayload>(token);
-        console.log(payload)
 
         const now = Date.now() / 1000;
 

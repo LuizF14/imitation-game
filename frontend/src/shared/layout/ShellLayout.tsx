@@ -4,15 +4,17 @@ import { CssBaseline, Box } from "@mui/material";
 import { Navbar } from "../components/Navbar";
 import { Sidebar } from "../components/Sidebar";
 import type { SidebarLink } from "../types/SidebarLinks";
+import type { Profile } from "../types/Profile";
 
 interface Props {
     children: React.ReactNode;
     theme: Theme;             
     sidebarLinks: SidebarLink[];
     bottomPadding?: boolean;
+    profile: Profile;
 }
 
-export function ShellLayout({ children, theme, sidebarLinks, bottomPadding = true }: Props) {
+export function ShellLayout({ children, theme, sidebarLinks, bottomPadding = true, profile}: Props) {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
@@ -26,7 +28,7 @@ export function ShellLayout({ children, theme, sidebarLinks, bottomPadding = tru
                     overflow: "hidden",
                 }}
             >
-                <Sidebar links={sidebarLinks} />
+                <Sidebar links={sidebarLinks} profile={profile} />
 
                 <Box
                     component="main"
