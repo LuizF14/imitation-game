@@ -21,18 +21,6 @@ export function useAuth() {
     try {
         const payload = jwtDecode<JwtPayload>(token);
 
-        const now = Date.now() / 1000;
-
-        if (payload.exp < now) {
-            localStorage.removeItem("access_token");
-
-            return {
-                isAuthenticated: false,
-                role: undefined,
-                userId: undefined,
-            };
-        }
-
         return {
             isAuthenticated: true,
             role: payload.role,

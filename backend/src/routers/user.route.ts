@@ -88,14 +88,6 @@ async function userRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["User"],
         summary: "Refresh access token",
-        body: {
-          type: "object",
-          required: ["refresh_token"],
-          properties: {
-            refresh_token: { type: "string" },
-          },
-          examples: [{ refresh_token: "eyJhbGci..." }],
-        },
         response: {
           200: {
             description: "Tokens refreshed successfully",
@@ -124,14 +116,6 @@ async function userRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["User"],
         summary: "User logout",
-        body: {
-          type: "object",
-          required: ["refresh_token"],
-          properties: {
-            refresh_token: { type: "string" },
-          },
-          examples: [{ refresh_token: "eyJhbGci..." }],
-        },
         response: {
           200: {
             description: "Logged out successfully",
