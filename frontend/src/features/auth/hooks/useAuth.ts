@@ -1,11 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-import type { Roles } from "../../../app/constants/rolesEnum";
-
-interface JwtPayload {
-    id: string;
-    role: Roles;
-    exp: number;
-}
+import type { JwtPayload } from "../types/JwtPayload";
 
 export function useAuth() {
     const token = localStorage.getItem("access_token");
