@@ -2,41 +2,19 @@ import { Box, Container, Grid, Stack, Typography } from "@mui/material";
 import TrendingUpOutlinedIcon from "@mui/icons-material/TrendingUpOutlined";
 import { userStatsStyles } from "../styles/UserStatsSection.styles";
 import { UserStatCard } from "./UserStatCard";
-import type { UserStatCardProps } from "./UserStatCard";
 import { useTranslation } from "react-i18next";
+import { buildStatsCards } from "../data/StatsCards";
 
-interface Props {
+export interface UserStatsProps {
     stats: {
         sessionsPlayed: number;
-        winRate: number;       // 0–100
+        score: number;      
         avgTuringRate: number; // 0–1
         ranking: number | null;
     };
 }
 
-function buildStatsCards(stats: Props["stats"]): UserStatCardProps[] { 
-    return [
-        {
-            label: "user.statsSection.sessionsPlayed",
-            value: stats.sessionsPlayed,
-        },
-        {
-            label: "user.statsSection.winRate",
-            value: `${stats.winRate.toFixed(1)}%`,
-        },
-        {
-            label: "user.statsSection.avgTuringRate",
-            value: stats.avgTuringRate.toFixed(2),
-            subtitle: "user.statsSection.turingRateSubtitle",
-        },
-        {
-            label: "user.statsSection.globalRanking",
-            value: stats.ranking !== null ? `#${stats.ranking}` : "—",
-        },
-    ]
-}
-
-export function UserStatsSection({ stats }: Props) {
+export function UserStatsSection({ stats }: UserStatsProps) {
     const {t} = useTranslation();
     const cards = buildStatsCards(stats);
 
@@ -47,7 +25,7 @@ export function UserStatsSection({ stats }: Props) {
                 <Stack direction="row" spacing={1} sx={{ mb: 3, alignItems: "center" }}>
                     <TrendingUpOutlinedIcon sx={{ fontSize: 18, color: "primary.main" }} />
                     <Typography variant="overline" sx={userStatsStyles.title} >
-                        Your stats
+                        {t("user.statsSection.yourStats")}
                     </Typography>
                 </Stack>
 

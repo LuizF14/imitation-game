@@ -121,10 +121,11 @@
     "user": {
         "statsSection": {
             "sessionsPlayed": "Sessions played", 
-            "winRate": "Win rate",
+            "score": "Total Score",
             "avgTuringRate": "Avg Turing Rate received",
             "globalRanking": "Global ranking",
-            "turingRateSubtitle": "0 = robot · 1 = human"
+            "turingRateSubtitle": "0 = robot · 1 = human",
+            "yourStats": "Your stats"
         },
         "activeSessionBanner": {
             "resumeSession": "Resume Session"

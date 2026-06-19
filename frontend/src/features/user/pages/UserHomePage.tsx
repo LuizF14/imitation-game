@@ -7,7 +7,7 @@ import { ShellLayout } from "../../../shared/layout/ShellLayout";
 
 const mockStats = {
     sessionsPlayed: 42,
-    winRate: 61.9,
+    score: 1010,
     avgTuringRate: 0.73,
     ranking: 18,
 };
