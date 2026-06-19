@@ -2,12 +2,12 @@ import {createBrowserRouter} from "react-router-dom";
 
 import { APP_ROUTES } from "./appRoutes";
 import { LandingPage } from "../../features/landing/pages/LandingPage";
-import { UserLoginPage } from "../../features/user/pages/UserLoginPage";
-import { UserSignUpPage } from "../../features/user/pages/UserSignUpPage";
-import { AIProviderSignUpPage } from "../../features/ai-provider/pages/AIProviderSignUpPage";
-import { AIProviderLoginPage } from "../../features/ai-provider/pages/AIProviderLoginPage";
-import { AdminLoginPage } from "../../features/admin/pages/AdminLoginPage";
-import { AdminRegisterPage } from "../../features/admin/pages/AdminRegisterPage";
+import { UserLoginPage } from "../../features/auth/pages/UserLoginPage";
+import { UserSignUpPage } from "../../features/auth/pages/UserSignUpPage";
+import { AIProviderSignUpPage } from "../../features/auth/pages/AIProviderSignUpPage";
+import { AIProviderLoginPage } from "../../features/auth/pages/AIProviderLoginPage";
+import { AdminLoginPage } from "../../features/auth/pages/AdminLoginPage";
+import { AdminRegisterPage } from "../../features/auth/pages/AdminRegisterPage";
 import { ProtectedRoute } from "../../features/auth/components/ProtectedRoutes";
 import { UserHomePage } from "../../features/user/pages/UserHomePage";
 import { AIProviderHomePage } from "../../features/ai-provider/pages/AIProviderHomePage";

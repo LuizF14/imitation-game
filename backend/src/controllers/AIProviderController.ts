@@ -54,7 +54,7 @@ export class AIProviderController {
 
         const payload = {
             id: provider.id,
-            role: 'provider'
+            role: 'AIPROVIDER'
         };
 
         const accessToken = JWT.generateAccessToken(payload);
@@ -96,14 +96,14 @@ export class AIProviderController {
 
         const { refreshToken: newRefreshToken, jti: newJti } = JWT.generateRefreshToken({
             id: decoded.id,
-            role: 'provider'
+            role: 'AIPROVIDER'
         });
 
         await RefreshTokenRepository.create(newJti, decoded.id);
 
         const newAccessToken = JWT.generateAccessToken({
             id: decoded.id,
-            role: 'provider'
+            role: 'AIPROVIDER'
         });
 
         return reply

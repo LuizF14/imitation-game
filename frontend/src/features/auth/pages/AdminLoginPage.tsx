@@ -1,10 +1,10 @@
 import {Container, Paper} from "@mui/material";
-import { LoginForm } from "../../auth/components/LoginForm";
+import { LoginForm } from "../components/LoginForm";
 
 import { ThemeProvider } from "@emotion/react";
 import { mainTheme } from "../../../app/themes/mainTheme";
 import { Navbar } from "../../../shared/components/Navbar";
-import type { LoginFormData } from "../../auth/types/Login";
+import type { LoginFormData } from "../types/Login";
 
 export function AdminLoginPage() {
     async function handleLogin(data: LoginFormData) {

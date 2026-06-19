@@ -15,7 +15,7 @@ export const createUserSignUpSchema = (t: TFunction) =>
 
         password: yup
             .string()
-            .min(6, t("auth.shortPassword"))
+            .min(7, t("auth.shortPassword"))
             .required(t("auth.requiredPassword")),
 
         confirmPassword: yup

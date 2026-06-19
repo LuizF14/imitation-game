@@ -2,8 +2,8 @@ import { ThemeProvider } from "@emotion/react";
 import { Navbar } from "../../../shared/components/Navbar";
 import { Container, Paper } from "@mui/material";
 import { mainTheme } from "../../../app/themes/mainTheme";
-import { AdminRegisterForm } from "../../auth/components/AdminRegisterForm";
-import type { AdminSignUpData } from "../../auth/types/AdminSignUpData";
+import { AdminRegisterForm } from "../components/AdminRegisterForm";
+import type { AdminSignUpData } from "../types/AdminSignUpData";
 
 export function AdminRegisterPage() {
     async function handleSignUp(data: AdminSignUpData) {

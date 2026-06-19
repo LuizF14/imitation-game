@@ -53,7 +53,7 @@ export class UserController {
 
         const payload = {
             id: user.id,
-            role: 'user'
+            role: 'USER'
         };
 
         const accessToken = JWT.generateAccessToken(payload);
@@ -95,14 +95,14 @@ export class UserController {
 
         const { refreshToken: newRefreshToken, jti: newJti } = JWT.generateRefreshToken({
             id: decoded.id,
-            role: 'user'
+            role: 'USER'
         });
 
         await RefreshTokenRepository.create(newJti, decoded.id);
 
         const newAccessToken = JWT.generateAccessToken({
             id: decoded.id,
-            role: 'user'
+            role: 'USER'
         });
 
         return reply

@@ -51,7 +51,7 @@ export class AdminController {
 
         const payload = {
             id: admin.id,
-            role: 'admin'
+            role: 'ADMIN'
         };
 
         const accessToken = JWT.generateAccessToken(payload);
@@ -114,14 +114,14 @@ export class AdminController {
 
         const { refreshToken: newRefreshToken, jti: newJti } = JWT.generateRefreshToken({
             id: decoded.id,
-            role: 'admin'
+            role: 'ADMIN'
         });
 
         await RefreshTokenRepository.create(newJti, decoded.id);
 
         const newAccessToken = JWT.generateAccessToken({
             id: decoded.id,
-            role: 'admin'
+            role: 'ADMIN'
         });
 
         return reply

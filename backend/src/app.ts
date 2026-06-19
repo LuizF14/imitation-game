@@ -13,9 +13,16 @@ import imageclassificationroundRoutes from "./routers/imageclassificationround.r
 import chatsessionRoutes from "./routers/chatsession.route.js";
 import messageRoutes from "./routers/message.route.js";
 import playerJudgmentRoutes from "./routers/playerjudgment.route.js";
+import fastifyCors from "@fastify/cors";
 
 export async function buildApp() {
     const app = Fastify({ logger: true });
+
+    await app.register(fastifyCors, {
+        origin: "http://localhost:5173", 
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        credentials: true 
+    });
 
     app.register(fastifyWebsocket);
 
@@ -51,16 +58,17 @@ export async function buildApp() {
         secret: "açslkdfjçalsdkjf",
     });
 
-    app.register(userRoutes);
-    app.register(aiproviderRoutes);
-    app.register(aimodelRoutes);
-    app.register(adminRoutes);
-    app.register(categoryRoutes);
-    app.register(imageRoutes);
-    app.register(imageclassificationroundRoutes);
-    app.register(chatsessionRoutes);
-    app.register(messageRoutes);
-    app.register(playerJudgmentRoutes);
+    app.register(userRoutes, {prefix: "/api"});
+    app.register(aiproviderRoutes, {prefix: "/api"});
+    app.register(aimodelRoutes, {prefix: "/api"});
+    app.register(adminRoutes, {prefix: "/api"});
+    app.register(categoryRoutes, {prefix: "/api"});
+    app.register(imageRoutes, {prefix: "/api"});
+    app.register(imageclassificationroundRoutes, {prefix: "/api"});
+    app.register(chatsessionRoutes, {prefix: "/api"});
+    app.register(messageRoutes, {prefix: "/api"});
+    app.register(playerJudgmentRoutes, {prefix: "/api"});
+
     app.setErrorHandler((error, request, reply) => {
         if (error instanceof AppError) {
             return reply.status(error.statusCode).send({
