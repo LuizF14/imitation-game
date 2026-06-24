@@ -1,27 +1,21 @@
-import { Box, Container, Grid, Stack, Typography } from "@mui/material";
+import { Alert, Box, Container, Grid, Stack, Typography } from "@mui/material";
 import TrendingUpOutlinedIcon from "@mui/icons-material/TrendingUpOutlined";
 import { userStatsStyles } from "../styles/UserStatsSection.styles";
-import { UserStatCard } from "./UserStatCard";
+import { UserStatCard, UserStatCardSkeleton } from "./UserStatCard";
 import { useTranslation } from "react-i18next";
-import { buildStatsCards } from "../data/StatsCards";
+import { buildStatsCards, CARD_COUNT } from "../data/StatsCards";
+import { useUserStats } from "../hooks/useUserStats";
 
-export interface UserStatsProps {
-    stats: {
-        sessionsPlayed: number;
-        score: number;      
-        avgTuringRate: number; // 0–1
-        ranking: number | null;
-    };
-}
-
-export function UserStatsSection({ stats }: UserStatsProps) {
+export function UserStatsSection() {
     const {t} = useTranslation();
-    const cards = buildStatsCards(stats);
+    const { data: stats, isLoading, isError } = useUserStats();
+    console.log(isLoading, isError);
+
+    const cards = stats ? buildStatsCards(stats) : null;
 
     return (
         <Box component="section" sx={{ py: { xs: 1, md: 3 } }}>
             <Container maxWidth="lg">
-
                 <Stack direction="row" spacing={1} sx={{ mb: 3, alignItems: "center" }}>
                     <TrendingUpOutlinedIcon sx={{ fontSize: 18, color: "primary.main" }} />
                     <Typography variant="overline" sx={userStatsStyles.title} >
@@ -29,12 +23,24 @@ export function UserStatsSection({ stats }: UserStatsProps) {
                     </Typography>
                 </Stack>
 
+                {isError && (
+                    <Alert severity="error" sx={{ mb: 2 }}>
+                        {t("user.statsSection.error")}
+                    </Alert>
+                )}
+
                 <Grid container spacing={2}>
-                    {cards.map((card) => (
-                        <Grid size={{ xs: 6, md: 3 }} key={t(card.label)} >
-                            <UserStatCard {...card} />
-                        </Grid>
-                    ))}
+                    {isLoading && Array.from({ length: CARD_COUNT }).map((_, i) => (
+                            <Grid size={{ xs: 6, md: 3 }} key={i}>
+                                <UserStatCardSkeleton />
+                            </Grid>
+                        ))}
+
+                    {!isError && !isLoading && cards && cards.map((card) => (
+                            <Grid size={{ xs: 6, md: 3 }} key={t(card.label)}>
+                                <UserStatCard {...card} />
+                            </Grid>
+                        ))}
                 </Grid>
             </Container>
         </Box>

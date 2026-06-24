@@ -116,7 +116,9 @@
         "history": "Match History",
         "profile": "Profile",
         "settings": "Settings",
-        "manage": "Manage"
+        "manage": "Manage",
+        "viewprofile": "View Profile",
+        "error": "Some error occured"
     },
     "user": {
         "statsSection": {

@@ -158,6 +158,22 @@ export class UserController {
             });
     };
 
+    getMyStats =  async (request: FastifyRequest, reply: FastifyReply) => {
+        const id = request.decodedJWT?.id;
+        if (!id) throw new UnauthorizedError("Token is invalid");
+
+        const stats = await UserRepository.getStatsById(id);
+
+        return reply
+            .status(200)
+            .send({
+                score: stats.score,
+                sessionsPlayed: stats.sessionsPlayed,
+                ranking: stats.globalRanking,
+                avgTuringRate: 0
+            })
+    };
+
     updateMe = async (request: FastifyRequest<{Body: User}>, reply: FastifyReply) => {
         const id = request.decodedJWT?.id;
         if (!id) throw new UnauthorizedError("Token is invalid");

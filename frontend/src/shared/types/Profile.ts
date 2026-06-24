@@ -3,4 +3,5 @@ export interface Profile {
     avatarUrl?: string;
     route: string;
     loading?: boolean;
+    error?: boolean;
 }

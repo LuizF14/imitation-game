@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Skeleton, Typography } from "@mui/material";
 import { userStatsStyles } from "../styles/UserStatsSection.styles";
 import { useTranslation } from "react-i18next";
 
@@ -25,6 +25,16 @@ export function UserStatCard({ label, value, subtitle }: UserStatCardProps) {
                     {t(subtitle)}
                 </Typography>
             )}
+        </Box>
+    );
+}
+
+export function UserStatCardSkeleton() {
+    return (
+        <Box sx={userStatsStyles.cardBox}>
+            <Skeleton variant="text" width="60%" sx={{ fontSize: "0.75rem" }} />
+            <Skeleton variant="text" width="40%" sx={{ fontSize: "2.125rem", my: 0.5 }} />
+            <Skeleton variant="text" width="80%" sx={{ fontSize: "0.75rem" }} />
         </Box>
     );
 }

@@ -163,6 +163,33 @@ async function userRoutes(fastify: FastifyInstance) {
     userController.getMe
   );
 
+  fastify.get(
+    "/user/stats",
+    {
+      preHandler: [jwtAuthMiddleware, authorizeRoles(Roles.USER)],
+      schema: {
+        tags: ["User"],
+        summary: "Get current authenticated user",
+        security: [{ bearerAuth: [] }],
+        response: {
+          200: {
+            description: "Current user stats",
+            type: "object",
+            properties: {
+                score: {type: "number"},
+                sessionsPlayed: {type: "number"},
+                ranking: {type: "number"},
+                avgTuringRate: {type: "number"}
+            },
+          },
+          401: { description: "Unauthorized" },
+          403: { description: "Forbidden" },
+        },
+      },
+    },
+    userController.getMyStats
+  );
+
   fastify.put<{ Body: User }>(
     "/user/me",
     {

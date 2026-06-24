@@ -48,6 +48,11 @@ api.interceptors.response.use((response) => response, async (error) => {
                 return Promise.reject(error);
         }
 
+        localStorage.setItem(
+            "access_token",
+            refreshResponse.data.access_token
+        );
+
         originalRequest.headers.Authorization = `Bearer ${refreshResponse.data.access_token}`;
         return api(originalRequest);
     }

@@ -1,7 +1,17 @@
 import { api } from "../../../shared/api/client";
+import { userSchema } from "../schemas/UserSchema";
+import { userStatsSchema } from "../schemas/UserStatsSchema";
 
 export const UserAPI = {
-    // signup: (data: UserSignUpRequest) => api.post("/user/signup", data),
-    // login: (data: LoginFormData) => api.post("/user/login", data),
-    getMe: () => api.get("/user/me"),
+    getMe: async () => {
+        const response = await api.get("/user/me");
+        return await userSchema.validate(response.data);
+    },
+
+    getMyStats: async () => {
+        const response = await api.get("/user/stats");
+        return await userStatsSchema.validate(response.data, {
+            stripUnknown: true,
+        });
+    }
 };

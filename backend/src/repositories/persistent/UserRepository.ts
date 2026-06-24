@@ -40,6 +40,33 @@ export class UserRepository {
         return prismaUser;
     }
 
+    static async getStatsById(id: string) {
+        const stats = await prisma.$queryRaw<any>`
+            WITH user_players AS (
+                SELECT id
+                FROM "Player"
+                WHERE "userId" = ${id}
+            )
+            SELECT
+                (SELECT score FROM "User" WHERE id = ${id}) AS score,
+
+                (
+                    SELECT COUNT(DISTINCT cs.id)
+                    FROM "ChatSession" cs
+                    WHERE cs."player1Id" IN (SELECT id FROM user_players)
+                    OR cs."player2Id" IN (SELECT id FROM user_players)
+                ) AS "sessionsPlayed",
+
+                (
+                    SELECT COUNT(*) + 1
+                    FROM "User" u2
+                    WHERE u2.score > (SELECT score FROM "User" WHERE id = ${id})
+                ) AS "globalRanking";
+        `;
+
+        return stats[0];
+    }
+
     static async update(data : Partial<{username: string}>, id: string) {
         const user = await prisma.user.update({
             where: { id },

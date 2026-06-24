@@ -2,7 +2,7 @@ import SearchIcon from "@mui/icons-material/Search";
 
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Avatar, Box, Divider, InputBase, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Skeleton, Stack, Typography } from "@mui/material";
+import { Alert, Avatar, Box, Divider, InputBase, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Skeleton, Stack, Typography } from "@mui/material";
 import type { SidebarLink } from "../types/SidebarLinks";
 import type { Profile } from "../types/Profile";
 
@@ -46,6 +46,11 @@ export function SidebarContent({ profile, links, drawerWidth }: SidebarProps) {
                     },
                 }}
             >
+                {profile.error && (
+                    <Alert severity="error" sx={{ mb: 2 }}>
+                        {t("sidebar.error")}
+                    </Alert>
+                )}
                 {profile.loading && (
                     <Stack direction="row" sx={{alignItems: "center"}} spacing={1.5}>
                         <Skeleton variant="circular" width={36} height={36} sx={{ bgcolor: "rgba(255,255,255,0.06)", flexShrink: 0 }} />
@@ -94,7 +99,7 @@ export function SidebarContent({ profile, links, drawerWidth }: SidebarProps) {
                                 transition: "color 0.15s",
                             }}
                         >
-                            View profile
+                            {t("sidebar.viewprofile")}
                         </Typography>
                     </Box>
                 </Stack>}

@@ -1,7 +1,9 @@
 import type { UserStatCardProps } from "../components/UserStatCard";
-import type { UserStatsProps } from "../components/UserStatsSection";
+import type { UserStats } from "../schemas/UserStatsSchema";
 
-export function buildStatsCards(stats: UserStatsProps["stats"]): UserStatCardProps[] { 
+export const CARD_COUNT = 4;
+
+export function buildStatsCards(stats: UserStats): UserStatCardProps[] { 
     return [
         {
             label: "user.statsSection.sessionsPlayed",

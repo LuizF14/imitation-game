@@ -1,9 +1,10 @@
 import { APP_ROUTES } from "../../../app/router/appRoutes";
 
-export function extractProfile(data: any, isLoading: any) {
+export function extractProfile(data: any, isLoading: any, isError: any) {
     return {
-        name: data?.data.username ?? "",
+        name: data?.username ?? "",
         route: APP_ROUTES.USER_PROFILE,
-        loading: isLoading
+        loading: isLoading,
+        error: isError
     };
 }
