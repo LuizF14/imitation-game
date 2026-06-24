@@ -130,7 +130,11 @@
             "yourStats": "Your stats"
         },
         "activeSessionBanner": {
-            "resumeSession": "Resume Session"
+            "resumeSession": "Resume Session",
+            "chatDuel": "Chat Duel",
+            "viewResult": "View Result",
+            "activeSession": "Active Session",
+            "finishedSession": "Finished Session"
         },
         "gamemodeSection": {
             "title": "Play",

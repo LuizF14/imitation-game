@@ -19,6 +19,13 @@ async function chatsessionRoutes(fastify : FastifyInstance) {
         }
     }, chatSessionController.start);
 
+    fastify.get("/chatsession", {preHandler: [jwtAuthMiddleware, authorizeRoles(Roles.USER)],
+        schema: {
+            summary: "Recupera a session ativa pelo usuário",
+            security: [{ bearerAuth: [] }],
+        }
+    }, chatSessionController.getSession);
+
     fastify.post('/chatsession/end', {preHandler: jwtAuthMiddleware,
         schema: {
             summary: "Encerra uma chat session",

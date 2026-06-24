@@ -3,12 +3,12 @@ import { UserAPI } from "../api/user.api";
 
 import { useQuery } from '@tanstack/react-query';
 
-export function useUserStats() {
+export function useActiveSession() {
     const { userId } = useAuth();
     
     return useQuery({
-        queryKey: ["userStats", userId],
-        queryFn: UserAPI.getMyStats,
+        queryKey: ["userActiveSession", userId],
+        queryFn: UserAPI.getActiveSession,
         enabled: !!userId,
     });
 }

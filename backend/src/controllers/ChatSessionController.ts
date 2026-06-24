@@ -113,7 +113,19 @@ export class ChatSessionController {
     }
 
     getSession = async (request: FastifyRequest, reply: FastifyReply) => { 
+        const playerId = request.decodedJWT?.id;
+        if (!playerId) throw new UnauthorizedError("Token is invalid");
+
+        const session = await ChatSessionRepository.findActiveByPlayer(playerId);
         
+        if (!session) {
+            throw new NotFoundError("No active session");
+        }
+
+        return reply.send({
+            sessionId: session.id,
+            startedAt: session.startedAt
+        });
     }
 }
 export const chatSessionController = new ChatSessionController()

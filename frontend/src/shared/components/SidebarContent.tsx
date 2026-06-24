@@ -1,8 +1,6 @@
-import SearchIcon from "@mui/icons-material/Search";
-
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Alert, Avatar, Box, Divider, InputBase, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Skeleton, Stack, Typography } from "@mui/material";
+import { Alert, Avatar, Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Skeleton, Stack, Typography } from "@mui/material";
 import type { SidebarLink } from "../types/SidebarLinks";
 import type { Profile } from "../types/Profile";
 
@@ -103,31 +101,6 @@ export function SidebarContent({ profile, links, drawerWidth }: SidebarProps) {
                         </Typography>
                     </Box>
                 </Stack>}
-            </Box>
-
-
-            {/* Barra de pesquisa */}
-            <Box
-                sx={{
-                    px: 2,
-                    py: 1.5,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    borderBottom: "0.5px solid",
-                    borderColor: "divider",
-                }}
-            >
-                <SearchIcon sx={{ fontSize: 18, color: "text.disabled", flexShrink: 0 }} />
-                <InputBase
-                    placeholder="Search..."
-                    fullWidth
-                    sx={{
-                        fontSize: "0.85rem",
-                        color: "text.primary",
-                        "& input::placeholder": { color: "text.disabled" },
-                    }}
-                />
             </Box>
 
             {/* Links */}

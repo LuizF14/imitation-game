@@ -4,12 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { activeSessionStyles } from "../styles/ActiveSessionBanner.styles";
 import { useTranslation } from "react-i18next";
 import { APP_ROUTES } from "../../../app/router/appRoutes";
-
-interface Props {
-    sessionId: string;
-    mode: "chat" | "image";
-    secondsLeft: number;
-}
+import { useActiveSession } from "../hooks/useActiveSession";
+import { useSessionCountdown } from "../hooks/useSessionCountdown";
 
 function formatTime(seconds: number) {
     const m = Math.floor(seconds / 60).toString().padStart(2, "0");
@@ -17,32 +13,50 @@ function formatTime(seconds: number) {
     return `${m}:${s}`;
 }
 
-export function ActiveSessionBanner({ mode, secondsLeft }: Props) {
+export function ActiveSessionBanner() {
     const navigate = useNavigate();
     const {t} = useTranslation();
 
-    const modeLabel = mode === "chat" ? "Chat Duel" : "Image Classification";
-    const modeRoute = mode === "chat" ? APP_ROUTES.CHAT_SESSION : APP_ROUTES.IMAGE_SESSION;
+    const {data, isError, isLoading} = useActiveSession();
+    if (isError || isLoading) return;   
+    const { secondsLeft, isExpired } = useSessionCountdown(data?.startedAt);
 
     return (
-        <Box sx={activeSessionStyles.box} >
+        <Box sx={isExpired? activeSessionStyles.finishedBox : activeSessionStyles.activeBox} >
             <Container maxWidth="lg">
                 <Stack direction={{ xs: "column", sm: "row" }} sx={{alignItems: {xs: "flex-start", sm: "center"}, justifyContent: "space-between" }} spacing={2} >
                     <Stack direction="row" sx={{alignItems: "center"}} spacing={2}>
-                        <Chip size="small" label="Active session" color="success" sx={{ fontSize: "0.72rem" }} />
+                        <Chip size="small" label={isExpired? t("user.activeSessionBanner.finishedSession") : t("user.activeSessionBanner.activeSession")} color={isExpired? "warning": "success"} sx={{ fontSize: "0.72rem" }} />
                         <Typography variant="body2" sx={{ color: "text.primary" }}>
-                            {modeLabel}
+                            {t("user.activeSessionBanner.chatDuel")}
                         </Typography>
-                        <Stack direction="row"spacing={0.5} sx={{alignItems: "center"}}>
-                            <TimerOutlinedIcon sx={{ fontSize: 16, color: "text.secondary" }} />
-                            <Typography variant="body2" sx={{ color: secondsLeft < 60 ? "error.main" : "text.secondary", fontFamily: "monospace", fontWeight: 500}} >
-                                {formatTime(secondsLeft)}
-                            </Typography>
-                        </Stack>
+                        {!isExpired && (
+                            <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
+                                <TimerOutlinedIcon sx={{ fontSize: 16, color: "text.secondary" }} />
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        color: secondsLeft < 60 ? "error.main" : "text.secondary",
+                                        fontFamily: "monospace",
+                                        fontWeight: 500,
+                                    }}
+                                >
+                                    {formatTime(secondsLeft)}
+                                </Typography>
+                            </Stack>
+                        )}
                     </Stack>
 
-                    <Button variant="contained" size="small" onClick={() => navigate(modeRoute)} sx={{ flexShrink: 0 }} >
-                        {t("user.activeSessionBanner.resumeSession")}
+                    <Button
+                        variant="contained"
+                        size="small"
+                        color={isExpired ? "warning" : "primary"}
+                        onClick={() => navigate(APP_ROUTES.CHAT_SESSION)}
+                        sx={{ flexShrink: 0 }}
+                    >
+                        {isExpired
+                            ? t("user.activeSessionBanner.viewResult")
+                            : t("user.activeSessionBanner.resumeSession")}
                     </Button>
                 </Stack>
             </Container>
