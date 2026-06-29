@@ -4,11 +4,10 @@ import type { AIProvider } from "../../generated/prisma/client.js";
 import { jwtAuthMiddleware } from "../middlewares/jwtAuthMiddleware.js";
 import { authorizeRoles } from "../middlewares/authorizeRolesMiddleware.js";
 import { Roles } from "../middlewares/rolesEnum.js";
+import type { UpdateMeDTO } from "../domain/schemas/aiprovider.schema.js";
 
 async function aiproviderRoutes(fastify: FastifyInstance) {
-  fastify.post(
-    "/aiprovider/signup",
-    {
+  fastify.post("/aiprovider/signup", {
       schema: {
         tags: ["AIProvider"],
         summary: "Register a new AI provider",
@@ -40,13 +39,9 @@ async function aiproviderRoutes(fastify: FastifyInstance) {
           },
         },
       },
-    },
-    aiproviderController.signup
-  );
+    }, aiproviderController.signup);
 
-  fastify.post(
-    "/aiprovider/login",
-    {
+  fastify.post("/aiprovider/login", {
       schema: {
         tags: ["AIProvider"],
         summary: "AI provider login",
@@ -65,27 +60,21 @@ async function aiproviderRoutes(fastify: FastifyInstance) {
             type: "object",
             properties: {
               id: { type: "string" },
-              access_token: { type: "string" },
-              refresh_token: { type: "string" },
+              access_token: { type: "string" }
             },
-            examples: [
-              {
-                id: "clx1abc123",
-                access_token: "eyJhbGci...",
-                refresh_token: "eyJhbGci...",
-              },
-            ],
+            examples: [{ id: "clx1abc123", access_token: "eyJhbGci..." }],
+            headers: { "Set-Cookie": {
+                type: "string",
+                description: "Contém o refresh_token (ex: refresh_token=abc...; HttpOnly; Secure)"
+              }
+            }
           },
           401: { description: "Invalid credentials" },
         },
       },
-    },
-    aiproviderController.login
-  );
+    }, aiproviderController.login);
 
-  fastify.post(
-    "/aiprovider/refresh",
-    {
+  fastify.post("/aiprovider/refresh", {
       schema: {
         tags: ["AIProvider"],
         summary: "Refresh access token",
@@ -102,26 +91,20 @@ async function aiproviderRoutes(fastify: FastifyInstance) {
             description: "Tokens refreshed successfully",
             type: "object",
             properties: {
-              access_token: { type: "string" },
-              refresh_token: { type: "string" },
+              access_token: { type: "string" }
             },
-            examples: [
-              {
-                access_token: "eyJhbGci...",
-                refresh_token: "eyJhbGci...",
-              },
-            ],
+            examples: [{access_token: "eyJhbGci..."}],
+            headers: {"Set-Cookie": {
+              type: "string",
+              description: "Contém o refresh_token (ex: refresh_token=abc...; HttpOnly; Secure)"
+            }}
           },
           401: { description: "Invalid or expired refresh token" },
         },
       },
-    },
-    aiproviderController.refresh
-  );
+    }, aiproviderController.refresh);
 
-  fastify.post(
-    "/aiprovider/logout",
-    {
+  fastify.post("/aiprovider/logout", {
       schema: {
         tags: ["AIProvider"],
         summary: "AI provider logout",
@@ -145,13 +128,9 @@ async function aiproviderRoutes(fastify: FastifyInstance) {
           401: { description: "Invalid or expired refresh token" },
         },
       },
-    },
-    aiproviderController.logout
-  );
+    }, aiproviderController.logout);
 
-  fastify.get<{ Params: { id: string } }>(
-    "/aiprovider/:id",
-    {
+  fastify.get<{ Params: { id: string } }>("/aiprovider/:id", {
       schema: {
         tags: ["AIProvider"],
         summary: "Get AI provider by ID",
@@ -185,13 +164,9 @@ async function aiproviderRoutes(fastify: FastifyInstance) {
           404: { description: "Provider not found" },
         },
       },
-    },
-    aiproviderController.getById
-  );
+    }, aiproviderController.getById);
 
-  fastify.get(
-    "/aiprovider/me",
-    {
+  fastify.get("/aiprovider/me", {
       preHandler: [jwtAuthMiddleware, authorizeRoles(Roles.PROVIDER)],
       schema: {
         tags: ["AIProvider"],
@@ -220,13 +195,9 @@ async function aiproviderRoutes(fastify: FastifyInstance) {
           403: { description: "Forbidden" },
         },
       },
-    },
-    aiproviderController.getMe
-  );
+    }, aiproviderController.getMe);
 
-  fastify.put<{ Body: AIProvider }>(
-    "/aiprovider/me",
-    {
+  fastify.put<{ Body: UpdateMeDTO }>("/aiprovider/me",{
       preHandler: [jwtAuthMiddleware, authorizeRoles(Roles.PROVIDER)],
       schema: {
         tags: ["AIProvider"],
@@ -264,13 +235,9 @@ async function aiproviderRoutes(fastify: FastifyInstance) {
           403: { description: "Forbidden" },
         },
       },
-    },
-    aiproviderController.updateMe
-  );
+    }, aiproviderController.updateMe);
 
-  fastify.delete(
-    "/aiprovider/me",
-    {
+  fastify.delete("/aiprovider/me", {
       preHandler: [jwtAuthMiddleware, authorizeRoles(Roles.PROVIDER)],
       schema: {
         tags: ["AIProvider"],
@@ -289,9 +256,7 @@ async function aiproviderRoutes(fastify: FastifyInstance) {
           403: { description: "Forbidden" },
         },
       },
-    },
-    aiproviderController.deleteMe
-  );
+    }, aiproviderController.deleteMe);
 }
 
 export default aiproviderRoutes;

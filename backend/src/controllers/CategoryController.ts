@@ -1,35 +1,28 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
-import type { GenContentCategory } from '../../generated/prisma/client.js';
-import { Text } from '../domain/Text.js';
-import { CategoryRepository } from '../repositories/persistent/CategoryRepository.js';
-import { UnauthorizedError, ValidationError } from '../errors/errors.js';
+import { addCategorySchema, editCategorySchema, type AddCategoryDTO, type EditCategoryDTO } from '../domain/schemas/category.schema.js';
+import { CategoryService } from '../services/CategoryService.js';
 
 export class CategoryController {
-    addCategory = async (request: FastifyRequest<{Body: GenContentCategory}>, reply: FastifyReply) => {
-        const data = request.body;
-
-        const name = new Text(data.name, 40);
-        const prompt = new Text(data.basePrompt, 1024);
-
-        const newCategory = await CategoryRepository.create(name.value, prompt.value);
+    addCategory = async (request: FastifyRequest<{Body: AddCategoryDTO}>, reply: FastifyReply) => {
+        const data = addCategorySchema.parse(request.body);
+        const {newCategory} = await CategoryService.add(data); 
 
         return reply.status(201).send({
-            message: "New category was successfully added"
+            message: "New category was successfully added",
+            id: newCategory.id,
+            name: newCategory.name,
+            basePrompt: newCategory.basePrompt
         });
     }
 
     getAll = async (request: FastifyRequest, reply: FastifyReply) => {
-        const results = await CategoryRepository.getAll();
-
+        const {results} = await CategoryService.getAll();
         return reply.status(200).send(results);
     }
 
     getById = async (request: FastifyRequest<{Params: {id: string}}>, reply: FastifyReply) => {
         const id = request.params.id;
-
-        const category = await CategoryRepository.findById(id);
-        
-        if (!category) throw new ValidationError("Category not found");
+        const {category} = await CategoryService.get(id);
 
         return reply.status(200).send({
             id: category.id,
@@ -38,39 +31,20 @@ export class CategoryController {
         });
     }
 
-    editCategory = async (request: FastifyRequest<{Params: {id: string}, Body: GenContentCategory}>, reply: FastifyReply) => {
+    editCategory = async (request: FastifyRequest<{Params: {id: string}, Body: EditCategoryDTO}>, reply: FastifyReply) => {
         const { id } = request.params;
-        const data = request.body;
-
-        if (Object.keys(data).length === 0) {
-            return reply.status(400).send({ message: "No data provided for update" });
-        }
-
-        const updateData: any = {};
-
-        if (data.name) updateData.name = new Text(data.name, 40).value;
-        if (data.basePrompt) updateData.basePrompt = new Text(data.basePrompt, 1024).value;
-
-        const updatedCategory = await CategoryRepository.update(updateData, id);
-
-        if (!updatedCategory) {
-            throw new ValidationError("Category not found");
-        }
+        const data = editCategorySchema.parse(request.body);
+        const {updatedCategory} = await CategoryService.update(data, id);
 
         return reply.status(200).send({
-            name: updateData.name,
-            basePrompt: updateData.basePrompt
+            name: updatedCategory.name,
+            basePrompt: updatedCategory.basePrompt
         });
     }
 
     deleteCategory = async (request: FastifyRequest<{Params: {id: string}}>, reply: FastifyReply) => {
         const id = request.params.id;
-        
-        const category = await CategoryRepository.delete(id);
-
-        if (!category) {
-            throw new ValidationError("Category not found");
-        }
+        await CategoryService.delete(id);
 
         return reply.status(200).send({
             message: "Category deleted successfully"

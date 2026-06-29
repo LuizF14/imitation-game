@@ -9,11 +9,11 @@ import aiproviderRoutes from "./routers/aiprovider.route.js";
 import adminRoutes from "./routers/admin.route.js";
 import categoryRoutes from "./routers/category.route.js";
 import imageRoutes from "./routers/image.route.js";
-import imageclassificationroundRoutes from "./routers/imageclassificationround.route.js";
 import chatsessionRoutes from "./routers/chatsession.route.js";
 import messageRoutes from "./routers/message.route.js";
 import playerJudgmentRoutes from "./routers/playerjudgment.route.js";
 import fastifyCors from "@fastify/cors";
+import imageRoundRoutes from "./routers/imageround.route.js";
 
 export async function buildApp() {
     const app = Fastify({ logger: true });
@@ -64,7 +64,7 @@ export async function buildApp() {
     app.register(adminRoutes, {prefix: "/api"});
     app.register(categoryRoutes, {prefix: "/api"});
     app.register(imageRoutes, {prefix: "/api"});
-    app.register(imageclassificationroundRoutes, {prefix: "/api"});
+    app.register(imageRoundRoutes, {prefix: "/api"});
     app.register(chatsessionRoutes, {prefix: "/api"});
     app.register(messageRoutes, {prefix: "/api"});
     app.register(playerJudgmentRoutes, {prefix: "/api"});

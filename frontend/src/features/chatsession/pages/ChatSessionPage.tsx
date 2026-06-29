@@ -9,6 +9,8 @@ import { userSidebarLinks } from "../../user/data/UserSideBarLinks";
 import { APP_ROUTES } from "../../../app/router/appRoutes";
 import { useCurrentUser } from "../../user/hooks/useCurrentUser";
 import { extractProfile } from "../../user/utils/extractProfile";
+import { SearchingMatch } from "../components/SearchingMatch";
+import { useStartSession } from "../hooks/useStartSession";
 
 export function ChatSessionPage() {
     const navigate = useNavigate();
@@ -18,10 +20,15 @@ export function ChatSessionPage() {
 
     const { messages, turingRate, setTuringRate, secondsLeft, sessionEnded, result, handleSend } = useChatSession();
 
+    const session = useStartSession();
+    console.log(session);
+
     return (
         <ShellLayout theme={userTheme} sidebarLinks={userSidebarLinks} bottomPadding={false} profile={profile}>
-            <ChatSession messages={messages} turingRate={turingRate} setTuringRate={setTuringRate} secondsLeft={secondsLeft} sessionEnded={sessionEnded} handleSend={handleSend} />
-            
+            {session.status === "ALREADY_IN_SESSION" && <ChatSession messages={messages} turingRate={turingRate} 
+                setTuringRate={setTuringRate} secondsLeft={secondsLeft} 
+                sessionEnded={sessionEnded} handleSend={handleSend} />}
+            {session.status === "WAITING" && <SearchingMatch onCancel={() => console.log("sss")}/>}
             {result && (
                 <ResultModal
                     result={result}

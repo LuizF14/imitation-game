@@ -201,6 +201,12 @@
         }
     },
 
+    "searchingMatch": {
+        "title": "Searching for a match...",
+        "subtitle": "This may take a few seconds",
+        "cancel": "Cancel"
+    },
+
     "leaderboards": {
         "users": {
             "title": "User's Leaderboard",

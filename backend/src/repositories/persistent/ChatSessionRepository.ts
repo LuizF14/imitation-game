@@ -43,6 +43,10 @@ export class ChatSessionRepository {
         return session;
     }
 
+    static async removeActiveFromPlayer(playerId: string) {
+        await Cache.del(`playersession:${playerId}`);
+    }
+
     static async findById(id : string) {
         const session = await Cache.get(`${this.CACHE_PREFIX}:${id}`);
 

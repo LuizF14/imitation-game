@@ -9,7 +9,6 @@ import { useUserStats } from "../hooks/useUserStats";
 export function UserStatsSection() {
     const {t} = useTranslation();
     const { data: stats, isLoading, isError } = useUserStats();
-    console.log(isLoading, isError);
 
     const cards = stats ? buildStatsCards(stats) : null;
 

@@ -1,11 +1,11 @@
 import type { FastifyInstance } from "fastify";
-import { imageClassificationRoundController } from "../controllers/ImageClassificationRoundController.js";
+import { imageClassificationRoundController } from "../controllers/ImageRoundController.js";
 import { jwtAuthMiddleware } from "../middlewares/jwtAuthMiddleware.js";
 import { authorizeRoles } from "../middlewares/authorizeRolesMiddleware.js";
 import { Roles } from "../middlewares/rolesEnum.js";
 import type { HumanOrAIEnum } from "../../generated/prisma/enums.js";
 
-async function imageclassificationroundRoutes(fastify: FastifyInstance) {
+async function imageRoundRoutes(fastify: FastifyInstance) {
   fastify.post(
     "/imageround/start",
     {
@@ -116,4 +116,4 @@ async function imageclassificationroundRoutes(fastify: FastifyInstance) {
   );
 }
 
-export default imageclassificationroundRoutes;
+export default imageRoundRoutes;

@@ -1,32 +1,15 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
-import { AIModelRepository } from '../repositories/persistent/AIModelRepository.js';
-import type { AIModel } from '../../generated/prisma/client.js';
-import { Text } from '../domain/Text.js';
-import { ApiKey } from '../domain/ApiKey.js';
-import { AIProviderRepository } from '../repositories/persistent/AIProviderRepository.js';
-import { AppError, UnauthorizedError, ValidationError } from '../errors/errors.js';
-import { UriPath } from '../domain/UriPath.js';
+import { UnauthorizedError } from '../errors/errors.js';
+import { registerModelSchema, searchModelSchema, updateModelSchema, type RegisterModelDTO, type SearchModelDTO, type UpdateModelDTO } from '../domain/schemas/aimodel.schema.js';
+import { AIModelService } from '../services/AIModelService.js';
 
 export class AIModelController {
-    registerModel = async (request: FastifyRequest<{Body: AIModel}>, reply: FastifyReply) => {
+    registerModel = async (request: FastifyRequest<{Body: RegisterModelDTO}>, reply: FastifyReply) => {
         const providerId = request.decodedJWT?.id;
         if (!providerId) throw new UnauthorizedError("Token is invalid");
-        // o jwt já garante que provider existe!!!!!!
-        // const provider = await AIProviderRepository.findById(providerId);
-        // if (!provider) throw new ValidationError("This provider doesnt exist");
         
-        const data = request.body;
-        const name = new Text(data.name, 60);
-        const apiKey = ApiKey.createNewKey();
-        const pathUrl = new UriPath(data.pathURL);
-        
-        const newModel = await AIModelRepository.create(
-            name.value,
-            providerId,
-            ApiKey.hashKey(apiKey.plainKey),
-            pathUrl.value,
-            data.type
-        );
+        const data = registerModelSchema.parse(request.body);
+        const {newModel, apiKey} = await AIModelService.register(data, providerId);
 
         return reply.status(201).send({
             id: newModel.id,
@@ -36,9 +19,7 @@ export class AIModelController {
 
     getById = async (request: FastifyRequest<{Params: {id: string}}>, reply: FastifyReply) => {
         const id = request.params.id;
-        const model = await AIModelRepository.findById(id);
-
-        if(!model) throw new ValidationError("Model not found");
+        const {model} = await AIModelService.get(id);
 
         return reply.status(200).send({
             name: model.name,
@@ -50,39 +31,20 @@ export class AIModelController {
         });
     }
 
-    search = async (request: FastifyRequest<{ Querystring: { query: string } }>, reply: FastifyReply) => {
-        const { query } = request.query;
+    search = async (request: FastifyRequest<{ Querystring: SearchModelDTO }>, reply: FastifyReply) => {
+        const data = searchModelSchema.parse(request.query);
+        const {results} = await AIModelService.search(data);
 
-        if (!query || query.length < 2) {
-            throw new ValidationError("Query too short");
-        }
-
-        const results = await AIModelRepository.search(query);
-
-        return reply.send(results);
+        return reply.status(200).send(results);
     }
 
-    updateModel = async (request: FastifyRequest<{Params: {id: string}; Body: AIModel}>, reply: FastifyReply) => {
+    updateModel = async (request: FastifyRequest<{Params: {id: string}; Body: UpdateModelDTO}>, reply: FastifyReply) => {
         const modelId = request.params.id;
         const providerId = request.decodedJWT?.id;
         if (!providerId) throw new UnauthorizedError("Token is invalid");
-        const data = request.body;
 
-        if (Object.keys(data).length === 0) {
-            return reply.status(400).send({ message: "No data provided for update" });
-        }
-
-        const updateData: any = {};
-
-        if (data.pathURL !== undefined) {
-            updateData.pathURL = new UriPath(data.pathURL).value;
-        }
-
-        const updatedModel = await AIModelRepository.update(updateData, modelId, providerId);
-
-        if (!updatedModel) {
-            throw new ValidationError("Model not found");
-        }
+        const data = updateModelSchema.parse(request.body);
+        const {updatedModel} = await AIModelService.update(data, modelId, providerId);
 
         return reply.status(200).send({
             pathURL: updatedModel.pathURL
@@ -94,11 +56,7 @@ export class AIModelController {
         const providerId = request.decodedJWT?.id;
         if (!providerId) throw new UnauthorizedError("Token is invalid");
 
-        const model = await AIModelRepository.delete(modelId, providerId);
-
-        if (!model) {
-            throw new ValidationError("Model not found");
-        }
+        await AIModelService.delete(modelId, providerId);
 
         return reply.status(200).send({
             message: "Model deleted successfully"
@@ -106,9 +64,7 @@ export class AIModelController {
     }
 
     getLeaderboard = async (request: FastifyRequest, reply: FastifyReply) => {
-        const results = await AIModelRepository.getLeaderboard();
-        if (!results) throw new AppError("Leaderboard is empty");
-
+        const {results} = await AIModelService.getLeaderboard();
         return reply.status(200).send(results);
     }
 }

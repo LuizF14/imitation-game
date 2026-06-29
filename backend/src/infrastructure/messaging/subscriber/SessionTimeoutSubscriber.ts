@@ -1,15 +1,17 @@
-import { redis } from "../lib/redis.js";
-import { ChatSessionRepository } from "../repositories/persistent/ChatSessionRepository.js";
-import { matchmakingEventBus } from "./SocketMapStore.js";
+import { redis } from "../../../lib/redis.js";
+import { ChatSessionRepository } from "../../../repositories/persistent/ChatSessionRepository.js";
+import { ChatPublisher } from "../publisher/ChatPublisher.js";
 
 export class SessionTimeoutSubscriber {
-    private sub = redis.duplicate();
+    private static subscriber = redis.duplicate();
 
-    async init() {
-        // escuta eventos de expiração
-        await this.sub.subscribe("__keyevent@0__:expired");
+    static async start() {
+        await this.subscriber.subscribe("__keyevent@0__:expired");
+        await this.listen();
+    }
 
-        this.sub.on("message", async (_, key) => {
+    static async listen() {
+        this.subscriber.on("message", async (channel, key) => {
             if (!key.startsWith("session:timeout:")) return;
 
             const sessionId = key.split(":")[2];
@@ -21,7 +23,7 @@ export class SessionTimeoutSubscriber {
 
                 await ChatSessionRepository.persistSession(sessionId);
 
-                await matchmakingEventBus.notifySessionEnded(
+                await ChatPublisher.notifySessionEnded(
                     session.player1Id,
                     session.player2Id,
                     sessionId

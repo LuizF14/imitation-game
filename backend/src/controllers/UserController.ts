@@ -1,12 +1,7 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
-import { UserRepository } from '../repositories/persistent/UserRepository.js';
-import { RefreshTokenRepository } from '../repositories/volatile/RefreshTokenRepository.js';
-import type { User } from '../../generated/prisma/client.js';
-import { Password } from '../domain/Password.js';
-import { Email } from '../domain/Email.js';
-import { Text } from '../domain/Text.js';
-import { BadRequestError, UnauthorizedError, ValidationError } from '../errors/errors.js';
-import { JWT } from '../domain/JWT.js';
+import { UnauthorizedError, ValidationError } from '../errors/errors.js';
+import { UserService } from '../services/UserService.js';
+import { loginSchema, signupSchema, updateUserSchema, type LoginDTO, type SignUpDTO, type UpdateMeDTO } from '../domain/schemas/user.schema.js';
 
 const REFRESH_COOKIE_OPTIONS = {
     path: '/',
@@ -17,23 +12,9 @@ const REFRESH_COOKIE_OPTIONS = {
 };
 
 export class UserController {
-    signup = async (request: FastifyRequest<{Body: User}>, reply: FastifyReply) => {
-        const data = request.body;
-
-        const existing = await UserRepository.findByEmail(data.email);
-        if (existing) {
-            throw new BadRequestError("Email already exists");
-        }
-
-        const username = new Text(data.username, 40);
-        const email = new Email(data.email);
-        const hashedPassword = await Password.createFromPlainText(data.password);
-
-        const user = await UserRepository.create(
-            username.value,
-            email.value,
-            hashedPassword.hash
-        );
+    signup = async (request: FastifyRequest<{Body: SignUpDTO}>, reply: FastifyReply) => {
+        const data = signupSchema.parse(request.body);
+        const {user} = await UserService.signup(data);
 
         return reply
             .status(201)
@@ -42,24 +23,9 @@ export class UserController {
             });
     };
 
-    login = async (request: FastifyRequest<{Body: User}>, reply: FastifyReply) => {
-        const data = request.body;
-        const user = await UserRepository.findByEmail(data.email);
-
-        if (!user) throw new ValidationError("Login failed");
-
-        const isValid = await Password.compare(data.password, user.password);
-        if (!isValid) throw new ValidationError("Login failed");
-
-        const payload = {
-            id: user.id,
-            role: 'USER'
-        };
-
-        const accessToken = JWT.generateAccessToken(payload);
-        const {refreshToken, jti} = JWT.generateRefreshToken(payload);
-
-        await RefreshTokenRepository.create(jti, user.id);
+    login = async (request: FastifyRequest<{Body: LoginDTO}>, reply: FastifyReply) => {
+        const data = loginSchema.parse(request.body);
+        const {user, refreshToken, accessToken} = await UserService.login(data);
 
         return reply
             .status(200)
@@ -72,38 +38,9 @@ export class UserController {
 
     refresh = async (request: FastifyRequest, reply: FastifyReply) => {
         const refreshToken = request.cookies.refresh_token;
+        if (!refreshToken) throw new ValidationError("Refresh token missing");
 
-        if (!refreshToken) {
-            throw new ValidationError("Refresh token missing");
-        }
-        
-        let decoded: any;
-
-        try {
-            decoded = JWT.verifyRefreshToken(refreshToken);
-        } catch {
-            throw new ValidationError("Invalid refresh token");
-        }
-
-        const exists = await RefreshTokenRepository.exists(decoded.jti);
-
-        if (!exists) {
-            throw new ValidationError("Invalid token");
-        }
-
-        await RefreshTokenRepository.delete(decoded.jti);
-
-        const { refreshToken: newRefreshToken, jti: newJti } = JWT.generateRefreshToken({
-            id: decoded.id,
-            role: 'USER'
-        });
-
-        await RefreshTokenRepository.create(newJti, decoded.id);
-
-        const newAccessToken = JWT.generateAccessToken({
-            id: decoded.id,
-            role: 'USER'
-        });
+        const {newRefreshToken, newAccessToken} = await UserService.refresh(refreshToken);
 
         return reply
             .status(200)
@@ -119,19 +56,9 @@ export class UserController {
 
     logout = async (request: FastifyRequest, reply: FastifyReply) => {
         const refreshToken = request.cookies.refresh_token;
+        if (!refreshToken) throw new ValidationError("Refresh token missing");
 
-        if (!refreshToken) {
-            throw new ValidationError("Refresh token missing");
-        }
-
-        let decoded : any;
-        try {
-            decoded = JWT.verifyRefreshToken(refreshToken) as any;
-        } catch {
-            throw new ValidationError("Invalid token");
-        }
-
-        await RefreshTokenRepository.delete(decoded.jti);
+        await UserService.logout(refreshToken);
 
         return reply
             .status(200)
@@ -147,8 +74,7 @@ export class UserController {
         const id = request.decodedJWT?.id;
         if (!id) throw new UnauthorizedError("Token is invalid");
 
-        const user = await UserRepository.findById(id);
-        if (!user) throw new UnauthorizedError("You cannot see this user");
+        const {user} = await UserService.getById(id);
 
         return reply
             .status(200)
@@ -162,7 +88,7 @@ export class UserController {
         const id = request.decodedJWT?.id;
         if (!id) throw new UnauthorizedError("Token is invalid");
 
-        const stats = await UserRepository.getStatsById(id);
+        const {stats} = await UserService.getStats(id);
 
         return reply
             .status(200)
@@ -174,26 +100,12 @@ export class UserController {
             })
     };
 
-    updateMe = async (request: FastifyRequest<{Body: User}>, reply: FastifyReply) => {
+    updateMe = async (request: FastifyRequest<{Body: UpdateMeDTO}>, reply: FastifyReply) => {
         const id = request.decodedJWT?.id;
         if (!id) throw new UnauthorizedError("Token is invalid");
-        const data = request.body;
-
-        if (Object.keys(data).length === 0) {
-            return reply.status(400).send({ message: "No data provided for update" });
-        }
-
-        if (data.username) {
-            data.username = new Text(data.username, 40).value;
-        }
-
-        const updatedUser = await UserRepository.update({
-            username: data.username
-        }, id);
-
-        if (!updatedUser) {
-            throw new ValidationError("User not found");
-        }
+        
+        const data = updateUserSchema.parse(request.body);
+        const updatedUser = await UserService.updateById(data, id);
 
         return reply
             .status(200)
@@ -206,13 +118,7 @@ export class UserController {
         const id = request.decodedJWT?.id;
         if (!id) throw new UnauthorizedError("Token is invalid");
 
-        const user = await UserRepository.delete(id);
-
-        if (!user) {
-            throw new ValidationError("User not found");
-        }
-
-        await RefreshTokenRepository.deleteAllFromUser(id);
+        await UserService.deleteById(id);
 
         return reply
             .status(200)

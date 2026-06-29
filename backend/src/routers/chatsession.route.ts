@@ -3,20 +3,24 @@ import { chatSessionController } from "../controllers/ChatSessionController.js";
 import { jwtAuthMiddleware } from "../middlewares/jwtAuthMiddleware.js";
 import { authorizeRoles } from "../middlewares/authorizeRolesMiddleware.js";
 import { Roles } from "../middlewares/rolesEnum.js";
+import { websocketAuthMiddleware } from "../middlewares/websocketAuthMiddleware.js";
 
 async function chatsessionRoutes(fastify : FastifyInstance) {
-    fastify.get('/chatsession/start', {websocket: true, preHandler: [jwtAuthMiddleware, authorizeRoles(Roles.USER)],
-        schema: {
-            summary: "Inicia uma chat session via WebSocket",
-            tags: ["ChatSession"],
-            security: [{ bearerAuth: [] }],
-            querystring: {
-                type: "object",
-                properties: {
-                sessionId: { type: "string", description: "ID da sessão" },
-                },
-            },
-        }
+    fastify.get('/chatsession/start', {websocket: true, preHandler: [websocketAuthMiddleware],
+        // schema: {
+        //     summary: "Inicia uma chat session via WebSocket",
+        //     tags: ["ChatSession"],
+        //     querystring: {
+        //         type: "object",
+        //         required: ["token"],
+        //         properties: {
+        //             token: {
+        //                 type: "string",
+        //                 description: "JWT access token"
+        //             }
+        //         }
+        //     }
+        // }
     }, chatSessionController.start);
 
     fastify.get("/chatsession", {preHandler: [jwtAuthMiddleware, authorizeRoles(Roles.USER)],

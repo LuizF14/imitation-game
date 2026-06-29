@@ -1,8 +1,6 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { UnauthorizedError } from "../errors/errors.js";
 import { AIModelRepository } from "../repositories/persistent/AIModelRepository.js";
-import { Url } from "../domain/Url.js";
-import { UriPath } from "../domain/UriPath.js";
 import { ApiKey } from "../domain/ApiKey.js";
 
 interface ApiKeyOwner {
@@ -28,8 +26,8 @@ export async function apiKeyAuthMiddleware(request: FastifyRequest<any>, reply: 
     if (!modelData) {
         throw new UnauthorizedError("Invalid API key");
     }
-
-    const url = new Url(modelData.provider.baseURL).value + new UriPath(modelData.pathURL).value;
+    
+    const url = modelData.provider.baseURL + modelData.pathURL;
 
     request.apiKeyOwner = {
         id: modelData.id,

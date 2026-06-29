@@ -1,25 +1,21 @@
 import { api } from "../../../shared/api/client";
-import { sessionSchema } from "../schemas/SessionSchema";
-import { userSchema } from "../schemas/UserSchema";
-import { userStatsSchema } from "../schemas/UserStatsSchema";
+import type { ChatSession } from "../types/Session";
+import type { User } from "../types/User";
+import type { UserStats } from "../types/UserStats";
 
-export const UserAPI = {
-    getMe: async () => {
+export class UserAPI {
+    static async getMe(): Promise<User> {
         const response = await api.get("/user/me");
-        return await userSchema.validate(response.data);
-    },
+        return response.data;
+    }
 
-    getMyStats: async () => {
+    static async getMyStats(): Promise<UserStats> {
         const response = await api.get("/user/stats");
-        return await userStatsSchema.validate(response.data, {
-            stripUnknown: true,
-        });
-    },
+        return response.data;
+    }
 
-    getActiveSession: async () => {
+    static async getActiveSession(): Promise<ChatSession> {
         const response = await api.get("/chatsession");
-        return await sessionSchema.validate(response.data, {
-            stripUnknown: true,
-        })
+        return response.data;
     }
 };

@@ -1,12 +1,8 @@
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import type { Admin } from '../../generated/prisma/client.js';
-import { AdminRepository } from '../repositories/persistent/AdminRepository.js';
-import { Password } from '../domain/Password.js';
+import { loginSchema, registerSchema, type LoginDTO, type RegisterDTO } from '../domain/schemas/admin.schema.js';
+import { AdminService } from '../services/AdminService.js';
 import { ValidationError } from '../errors/errors.js';
-import { Email } from '../domain/Email.js';
-import { Text } from '../domain/Text.js';
-import { JWT } from '../domain/JWT.js';
-import { RefreshTokenRepository } from '../repositories/volatile/RefreshTokenRepository.js';
 
 const REFRESH_COOKIE_OPTIONS = {
     path: '/',
@@ -17,47 +13,18 @@ const REFRESH_COOKIE_OPTIONS = {
 };
 
 export class AdminController {
-    register = async (request: FastifyRequest<{Body: Admin}>, reply: FastifyReply) => {
-        const data = request.body;
-        
-        const existing = await AdminRepository.findByEmail(data.email);
-        if (existing) {
-            throw new ValidationError("Email already exists");
-        }
-
-        const name = new Text(data.name, 60);
-        const email = new Email(data.email);
-        const hashedPassword = await Password.createFromPlainText(data.password);
-
-        const admin = await AdminRepository.create(
-            name.value,
-            email.value,
-            hashedPassword.hash
-        );
+    register = async (request: FastifyRequest<{Body: RegisterDTO}>, reply: FastifyReply) => {
+        const data = registerSchema.parse(request.body);
+        const {admin} = await AdminService.register(data);
 
         return reply.status(201).send({
             id: admin.id
         });
     }
 
-    login = async (request: FastifyRequest<{Body: Admin}>, reply: FastifyReply) => {
-        const data = request.body;
-        const admin = await AdminRepository.findByEmail(data.email);
-
-        if (!admin) throw new ValidationError("Login failed");
-
-        const isValid = await Password.compare(data.password, admin.password);
-        if (!isValid) throw new ValidationError("Login failed");
-
-        const payload = {
-            id: admin.id,
-            role: 'ADMIN'
-        };
-
-        const accessToken = JWT.generateAccessToken(payload);
-        const {refreshToken, jti} = JWT.generateRefreshToken(payload);
-
-        await RefreshTokenRepository.create(jti, admin.id);
+    login = async (request: FastifyRequest<{Body: LoginDTO}>, reply: FastifyReply) => {
+        const data = loginSchema.parse(request.body);
+        const {admin, accessToken, refreshToken} = await AdminService.login(data);        
 
         return reply
             .status(200)
@@ -69,16 +36,10 @@ export class AdminController {
     }
 
     logout = async (request: FastifyRequest<{Body: {refresh_token: string}}>, reply: FastifyReply) => {
-        const { refresh_token } = request.body;
-
-        if (!refresh_token) {
-            throw new ValidationError("Refresh token missing");
-        }
-
-        const decoded = JWT.verifyRefreshToken(refresh_token) as any;
-
-        await RefreshTokenRepository.delete(decoded.jti);
-
+        const refreshToken = request.body.refresh_token;
+        if (!refreshToken) throw new ValidationError("Refresh token missing");
+        await AdminService.logout(refreshToken);
+    
         return reply
             .status(200)
             .clearCookie("refresh_token", {
@@ -91,39 +52,9 @@ export class AdminController {
 
     refresh = async (request: FastifyRequest<{Body: {refresh_token: string}}>, reply: FastifyReply) => {
         const refreshToken = request.body.refresh_token;
-
-        if (!refreshToken) {
-            throw new ValidationError("Refresh token missing");
-        }
-
-        let decoded: any;
-
-        try {
-            decoded = JWT.verifyRefreshToken(refreshToken);
-        } catch {
-            throw new ValidationError("Invalid refresh token");
-        }
-
-        const exists = await RefreshTokenRepository.exists(decoded.jti);
-
-        if (!exists) {
-            throw new ValidationError("Invalid token");
-        }
-
-        await RefreshTokenRepository.delete(decoded.jti);
-
-        const { refreshToken: newRefreshToken, jti: newJti } = JWT.generateRefreshToken({
-            id: decoded.id,
-            role: 'ADMIN'
-        });
-
-        await RefreshTokenRepository.create(newJti, decoded.id);
-
-        const newAccessToken = JWT.generateAccessToken({
-            id: decoded.id,
-            role: 'ADMIN'
-        });
-
+        if (!refreshToken) throw new ValidationError("Refresh token missing"); 
+        const {newRefreshToken, newAccessToken} = await AdminService.refresh(refreshToken);
+        
         return reply
             .status(200)
             .setCookie(
@@ -137,21 +68,13 @@ export class AdminController {
     }
 
     getAll = async (request: FastifyRequest, reply: FastifyReply) => {
-        const admins = await AdminRepository.getAll();
-
+        const {admins} = await AdminService.getAll();
         return reply.status(200).send(admins);
     }
 
     deleteAdmin = async (request: FastifyRequest<{Params: {id: string}}>, reply: FastifyReply) => {
         const id = request.params.id;
-        
-        const admin = await AdminRepository.delete(id);
-
-        if (!admin) {
-            throw new ValidationError("Admin not found");
-        }
-
-        await RefreshTokenRepository.deleteAllFromUser(id);
+        await AdminService.deleteAdmin(id);
 
         return reply
             .status(200)

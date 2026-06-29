@@ -4,11 +4,10 @@ import type { User } from "../../generated/prisma/client.js";
 import { jwtAuthMiddleware } from "../middlewares/jwtAuthMiddleware.js";
 import { authorizeRoles } from "../middlewares/authorizeRolesMiddleware.js";
 import { Roles } from "../middlewares/rolesEnum.js";
+import type { UpdateMeDTO } from "../domain/schemas/user.schema.js";
 
 async function userRoutes(fastify: FastifyInstance) {
-  fastify.post(
-    "/user/signup",
-    {
+  fastify.post("/user/signup", {
       schema: {
         tags: ["User"],
         summary: "Register a new user",
@@ -17,16 +16,10 @@ async function userRoutes(fastify: FastifyInstance) {
           required: ["username", "email", "password"],
           properties: {
             username: { type: "string" },
-            email: { type: "string", format: "email" },
+            email: { type: "string" },
             password: { type: "string" },
           },
-          examples: [
-            {
-              username: "johndoe",
-              email: "john@example.com",
-              password: "secret123",
-            },
-          ],
+          examples: [{ username: "johndoe", email: "john@example.com", password: "secret123" }],
         },
         response: {
           201: {
@@ -39,13 +32,9 @@ async function userRoutes(fastify: FastifyInstance) {
           },
         },
       },
-    },
-    userController.signup
-  );
+    }, userController.signup);
 
-  fastify.post(
-    "/user/login",
-    {
+  fastify.post("/user/login", {
       schema: {
         tags: ["User"],
         summary: "User login",
@@ -64,27 +53,20 @@ async function userRoutes(fastify: FastifyInstance) {
             type: "object",
             properties: {
               id: { type: "string" },
-              access_token: { type: "string" },
-              refresh_token: { type: "string" },
+              access_token: { type: "string" }
             },
-            examples: [
-              {
-                id: "clx1abc123",
-                access_token: "eyJhbGci...",
-                refresh_token: "eyJhbGci...",
-              },
-            ],
+            examples: [{ id: "clx1abc123", access_token: "eyJhbGci..." }],
+            headers: {"Set-Cookie": {
+                type: "string",
+                description: "Contém o refresh_token (ex: refresh_token=abc...; HttpOnly; Secure)"
+              }}
           },
           401: { description: "Invalid credentials" },
         },
       },
-    },
-    userController.login
-  );
+    }, userController.login);
 
-  fastify.post(
-    "/user/refresh",
-    {
+  fastify.post("/user/refresh", {
       schema: {
         tags: ["User"],
         summary: "Refresh access token",
@@ -93,15 +75,13 @@ async function userRoutes(fastify: FastifyInstance) {
             description: "Tokens refreshed successfully",
             type: "object",
             properties: {
-              access_token: { type: "string" },
-              refresh_token: { type: "string" },
+              access_token: { type: "string" }
             },
-            examples: [
-              {
-                access_token: "eyJhbGci...",
-                refresh_token: "eyJhbGci...",
-              },
-            ],
+            examples: [{ access_token: "eyJhbGci..."}],
+            headers: {"Set-Cookie": {
+              type: "string",
+              description: "Contém o refresh_token (ex: refresh_token=abc...; HttpOnly; Secure)"
+            }}
           },
           401: { description: "Invalid or expired refresh token" },
         },
@@ -110,9 +90,7 @@ async function userRoutes(fastify: FastifyInstance) {
     userController.refresh
   );
 
-  fastify.post(
-    "/user/logout",
-    {
+  fastify.post("/user/logout", {
       schema: {
         tags: ["User"],
         summary: "User logout",
@@ -128,13 +106,9 @@ async function userRoutes(fastify: FastifyInstance) {
           401: { description: "Invalid or expired refresh token" },
         },
       },
-    },
-    userController.logout
-  );
+    }, userController.logout);
 
-  fastify.get(
-    "/user/me",
-    {
+  fastify.get("/user/me", {
       preHandler: [jwtAuthMiddleware, authorizeRoles(Roles.USER)],
       schema: {
         tags: ["User"],
@@ -148,24 +122,16 @@ async function userRoutes(fastify: FastifyInstance) {
               username: { type: "string" },
               score: { type: "number" },
             },
-            examples: [
-              {
-                username: "johndoe",
-                score: 1500,
-              },
-            ],
+            examples: [{ username: "johndoe", score: 1500 }],
           },
           401: { description: "Unauthorized" },
           403: { description: "Forbidden" },
         },
       },
     },
-    userController.getMe
-  );
+    userController.getMe);
 
-  fastify.get(
-    "/user/stats",
-    {
+  fastify.get("/user/stats", {
       preHandler: [jwtAuthMiddleware, authorizeRoles(Roles.USER)],
       schema: {
         tags: ["User"],
@@ -187,12 +153,9 @@ async function userRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    userController.getMyStats
-  );
+    userController.getMyStats);
 
-  fastify.put<{ Body: User }>(
-    "/user/me",
-    {
+  fastify.put<{ Body: UpdateMeDTO }>("/user/me", {
       preHandler: [jwtAuthMiddleware, authorizeRoles(Roles.USER)],
       schema: {
         tags: ["User"],
@@ -200,7 +163,6 @@ async function userRoutes(fastify: FastifyInstance) {
         security: [{ bearerAuth: [] }],
         body: {
           type: "object",
-          required: ["username"],
           properties: {
             username: { type: "string" },
           },
@@ -219,13 +181,9 @@ async function userRoutes(fastify: FastifyInstance) {
           403: { description: "Forbidden" },
         },
       },
-    },
-    userController.updateMe
-  );
+    }, userController.updateMe);
 
-  fastify.delete(
-    "/user/me",
-    {
+  fastify.delete("/user/me", { 
       preHandler: [jwtAuthMiddleware, authorizeRoles(Roles.USER)],
       schema: {
         tags: ["User"],
@@ -244,9 +202,7 @@ async function userRoutes(fastify: FastifyInstance) {
           403: { description: "Forbidden" },
         },
       },
-    },
-    userController.deleteMe
-  );
+    }, userController.deleteMe);
 }
 
 export default userRoutes;
